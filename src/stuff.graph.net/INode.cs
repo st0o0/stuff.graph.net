@@ -4,6 +4,6 @@ namespace stuff.graph.net;
 
 public interface INode
 {
-    long Id { get; }
+    int Id { get; }
     Vector3 Location { get; }
 }

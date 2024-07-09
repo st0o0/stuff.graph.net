@@ -8,5 +8,9 @@ public class Edge : IEdge
 
     public INode EndNode { get; init; }
 
+    public int AdditionalRoutingCost { get; init; }
+
     public float GetLength() => (EndNode.Location - StartNode.Location).Length();
+    
+    public virtual EdgeDirection GetDirection() => EdgeDirection.TwoWay;
 }

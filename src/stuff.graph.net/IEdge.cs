@@ -7,4 +7,5 @@ public interface IEdge
     INode EndNode { get; }
     int AdditionalRoutingCost { get; }
     float GetLength();
+    EdgeDirection GetDirection();
 }

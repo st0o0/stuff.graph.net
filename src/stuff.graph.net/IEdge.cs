@@ -2,10 +2,10 @@
 
 public interface IEdge
 {
-    int Id { get; init; }
+    long Id { get; init; }
     INode StartNode { get; }
     INode EndNode { get; }
-    int AdditionalRoutingCost { get; }
+    uint RoutingCost { get; }
     float GetLength();
     EdgeDirection GetDirection();
 }

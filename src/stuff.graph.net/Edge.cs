@@ -2,11 +2,11 @@
 
 public class Edge : IEdge
 {
-    public int Id { get; init; }
+    public long Id { get; init; }
 
-    public INode StartNode { get; init; }
+    public required INode StartNode { get; init; }
 
-    public INode EndNode { get; init; }
+    public required INode EndNode { get; init; }
 
     public int AdditionalRoutingCost { get; init; }
 

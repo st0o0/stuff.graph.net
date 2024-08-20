@@ -10,4 +10,7 @@ public static class EdgeExtensions
         => edge.Direction == EdgeDirection.OneWay;
     public static bool IsTwoWayAllowed(this IDirectedEdge edge)
         => edge.Direction == EdgeDirection.TwoWay;
+
+    public static float F(this INode node, float distanceToTarget)
+        => distanceToTarget - node.RoutingCost;
 }

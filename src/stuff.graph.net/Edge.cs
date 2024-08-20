@@ -8,7 +8,7 @@ public class Edge : IEdge
 
     public required INode EndNode { get; init; }
 
-    public int AdditionalRoutingCost { get; init; }
+    public uint RoutingCost { get; init; }
 
     public float GetLength() => (EndNode.Location - StartNode.Location).Length();
     

@@ -15,9 +15,9 @@ public static class Extensions
             _ => throw new NotImplementedException(),
         };
     public static SerializableEdge ToSerializable(this Edge edge)
-        => new(edge.Id, edge.StartNode.Id, edge.EndNode.Id, edge.AdditionalRoutingCost);
+        => new(edge.Id, edge.StartNode.Id, edge.EndNode.Id, edge.RoutingCost);
     public static SerializableEdge ToSerializable(this DirectedEdge edge)
-        => new(edge.Id, edge.StartNode.Id, edge.EndNode.Id, edge.AdditionalRoutingCost, edge.Direction);
+        => new(edge.Id, edge.StartNode.Id, edge.EndNode.Id, edge.RoutingCost, edge.Direction);
     public static SerializableNode ToSerializable(this INode node)
         => new(node.Id, node.Location.ToSerializable());
     public static SerializableLocation ToSerializable(this Vector3 vector)
@@ -46,7 +46,7 @@ public static class Extensions
             Id = edge.Id,
             StartNode = nodes.First(item => item.Id == edge.StartNodeId),
             EndNode = nodes.First(item => item.Id == edge.EndNodeId),
-            AdditionalRoutingCost = edge.AdditionalRoutingCost,
+            RoutingCost = edge.RoutingCost,
         };
     }
     private static DirectedEdge CreateDirectedEdge(SerializableEdge edge, IEnumerable<INode> nodes)
@@ -56,7 +56,7 @@ public static class Extensions
             Id = edge.Id,
             StartNode = nodes.First(item => item.Id == edge.StartNodeId),
             EndNode = nodes.First(item => item.Id == edge.EndNodeId),
-            AdditionalRoutingCost = edge.AdditionalRoutingCost,
+            RoutingCost = edge.RoutingCost,
             Direction = edge.Direction,
         };
     }

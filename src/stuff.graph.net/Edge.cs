@@ -1,16 +1,12 @@
 ﻿namespace stuff.graph.net;
 
-public class Edge : IEdge
+public record Edge : IEdge
 {
+    public static Edge Create(long id, long startId, long endId)
+        => new() { Id = id, StartNodeId = startId, EndNodeId = endId };
+
     public long Id { get; init; }
-
-    public required INode StartNode { get; init; }
-
-    public required INode EndNode { get; init; }
-
+    public required long StartNodeId { get; init; }
+    public required long EndNodeId { get; init; }
     public uint RoutingCost { get; init; }
-
-    public float GetLength() => (EndNode.Location - StartNode.Location).Length();
-    
-    public virtual EdgeDirection GetDirection() => EdgeDirection.TwoWay;
 }

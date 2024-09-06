@@ -4,9 +4,18 @@ namespace stuff.graph.net;
 
 public record Node : INode
 {
+    public static Node Create(long id, float x, float y, float z)
+        => new() { Id = id, Location = new Vector3(x, y, z) };
+
     public long Id { get; init; }
-    public required IEdge[] Outgoing { get; init; }
-    public required IEdge[] Incoming { get; init; }
-    public uint RoutingCost { get; } = uint.MinValue;
+    public long[] OutgoingEdgeIds { get; private set; } = [];
+    public long[] IncomingEdgeIds { get; private set; } = [];
+    public uint RoutingCost { get; init; } = uint.MinValue;
     public Vector3 Location { get; init; } = Vector3.Zero;
+
+    public void AddIncoming(long id)
+        => IncomingEdgeIds = [.. IncomingEdgeIds, id];
+
+    public void AddOutgoing(long id)
+        => OutgoingEdgeIds = [.. OutgoingEdgeIds, id];
 }

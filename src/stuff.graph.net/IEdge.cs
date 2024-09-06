@@ -3,9 +3,8 @@
 public interface IEdge
 {
     long Id { get; init; }
-    INode StartNode { get; }
-    INode EndNode { get; }
+    long StartNodeId { get; }
+    long EndNodeId { get; }
     uint RoutingCost { get; }
-    float GetLength();
-    EdgeDirection GetDirection();
+    EdgeDirection GetDirection() => EdgeDirection.TwoWay;
 }

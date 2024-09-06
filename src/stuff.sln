@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.astar.net", "st
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.dijkstra.net", "stuff.graph.dijkstra.net\stuff.graph.dijkstra.net.csproj", "{59C5C517-FB4E-49E3-A90A-B541217F740C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.tests", "stuff.graph.tests\stuff.graph.tests.csproj", "{5AA748F3-E0AC-4BCB-B6DF-EF45526585E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.algorithms.net", "stuff.graph.algorithms.net\stuff.graph.algorithms.net.csproj", "{8ED11DE5-D912-4F6D-BAA6-47281D63D5CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{59C5C517-FB4E-49E3-A90A-B541217F740C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59C5C517-FB4E-49E3-A90A-B541217F740C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59C5C517-FB4E-49E3-A90A-B541217F740C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AA748F3-E0AC-4BCB-B6DF-EF45526585E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA748F3-E0AC-4BCB-B6DF-EF45526585E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AA748F3-E0AC-4BCB-B6DF-EF45526585E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AA748F3-E0AC-4BCB-B6DF-EF45526585E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ED11DE5-D912-4F6D-BAA6-47281D63D5CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ED11DE5-D912-4F6D-BAA6-47281D63D5CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ED11DE5-D912-4F6D-BAA6-47281D63D5CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ED11DE5-D912-4F6D-BAA6-47281D63D5CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

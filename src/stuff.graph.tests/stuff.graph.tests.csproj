@@ -1,3 +1,5 @@
+
+
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -23,6 +25,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\stuff.graph.a-star.net\stuff.graph.astar.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.dijkstra.net\stuff.graph.dijkstra.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.serializable.net\stuff.graph.serializable.net.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="newmap.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup> 
 
 </Project>

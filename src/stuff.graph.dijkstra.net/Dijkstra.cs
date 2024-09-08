@@ -1,85 +1,82 @@
+using stuff.graph.algorithms.net;
 using stuff.graph.net;
 
 namespace stuff.graph.dijkstra.net;
 
-public class Dijkstra(IGraph graph)
+public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, IPathfinderSettings>
 {
-    private readonly IGraph _graph = graph;
+    private readonly IGraph _graph;
+    private readonly IPathfinderSettings _settings;
 
-    public List<long> FindShortestPath(long startNodeId, long targetNodeId)
+    public static IPathfinder<IPathfinderResult, IPathfinderArguments, IPathfinderSettings> Create(IPathfinderConfig<IPathfinderSettings> config)
+        => new Dijkstra(config.Graph, config.Settings);
+
+    private Dijkstra(IGraph graph, IPathfinderSettings settings)
     {
-        // Priority Queue für die Dijkstra-Algorithmus
-        var priorityQueue = new SortedSet<(uint distance, long nodeId)>();
-        var distances = new Dictionary<long, uint>();
-        var previousNodes = new Dictionary<long, long>();
+        _graph = graph;
+        _settings = settings;
+    }
 
-        // Initialisiere alle Knoten
+    public IPathfinderResult? GetShortestPath(IPathfinderArguments args)
+    {
+        var source = args.SourceNode;
+        var target = args.TargetNode;
+        var distances = new Dictionary<long, uint>();
+        var priorityQueue = new PriorityQueue<PathNode>();
+
         foreach (var node in _graph.Nodes.Values)
         {
             distances[node.Id] = uint.MaxValue;
-            previousNodes[node.Id] = long.MinValue;
         }
 
-        // Distanz des Startknotens zu sich selbst ist 0
-        distances[startNodeId] = 0;
-        priorityQueue.Add((0, startNodeId));
+        var pathNode = new PathNode(source.Id, 0, null, source);
+        priorityQueue.Enqueue(pathNode);
 
         while (priorityQueue.Count > 0)
         {
-            // Wähle den Knoten mit der kleinsten Distanz
-            var (currentDistance, currentNodeId) = priorityQueue.Min;
-            priorityQueue.Remove(priorityQueue.Min);
+            var currentNode = priorityQueue.Dequeue();
+            var node = currentNode.Node;
 
-            // Wenn wir den Zielknoten erreicht haben, können wir aufhören
-            if (currentNodeId == targetNodeId)
+            if (currentNode.Id == target.Id)
             {
-                return ReconstructPath(previousNodes, targetNodeId);
+                return ReconstructPath(currentNode);
             }
 
-            var currentNode = _graph.Nodes[currentNodeId];
-            foreach (var edgeId in currentNode.OutgoingEdgeIds)
+            foreach (var edgeId in currentNode.Node.OutgoingEdgeIds)
             {
-                var edge = _graph.Edges[edgeId];
+                var edge = _graph.GetEdge(edgeId);
+                if(edge is null) continue;
                 var neighborNodeId = edge.EndNodeId;
 
-                // Berechne die neue potenzielle Distanz zum Nachbarknoten
-                var newDistance = currentDistance + edge.RoutingCost;
-
-                // Wenn die neue Distanz kleiner ist als die bisher bekannte, aktualisiere
+                var newDistance = currentNode.CurrentDistance + edge.RoutingCost + node.RoutingCost;
                 if (newDistance < distances[neighborNodeId])
                 {
-                    // Entferne den alten Wert aus der Queue (falls vorhanden)
-                    priorityQueue.Remove((distances[neighborNodeId], neighborNodeId));
-
-                    // Aktualisiere die Distanz und den Vorgänger
                     distances[neighborNodeId] = newDistance;
-                    previousNodes[neighborNodeId] = currentNodeId;
-
-                    // Füge den Nachbarknoten mit der aktualisierten Distanz zur Queue hinzu
-                    priorityQueue.Add((newDistance, neighborNodeId));
+                    priorityQueue.Enqueue(new PathNode(neighborNodeId, newDistance, currentNode, _graph.GetNode(neighborNodeId)));
                 }
             }
         }
 
-        // Wenn kein Pfad gefunden wurde, returniere eine leere Liste
-        return [];
+        return null;
     }
 
-    // Hilfsmethode zur Rekonstruktion des Pfades vom Zielknoten zum Startknoten
-    private static List<long> ReconstructPath(Dictionary<long, long> previousNodes, long targetNodeId)
+    private static Path ReconstructPath(PathNode currentNode)
     {
-        var path = new List<long>();
-        var currentNodeId = targetNodeId;
-
-        // Rückverfolgung des Pfades anhand der Vorgänger-Knoten
-        while (currentNodeId != null)
+        List<INode> path = [];
+        while (currentNode != null)
         {
-            path.Add(currentNodeId);
-            currentNodeId = previousNodes[currentNodeId];
+            path.Add(currentNode.Node);
+            currentNode = currentNode.Parent;
         }
-
-        // Da wir vom Ziel zum Start gehen, müssen wir den Pfad umdrehen
         path.Reverse();
-        return path;
+        var startNodeId = path[0].Id;
+        var endNodeId = path[^1].Id;
+        return new Path(startNodeId, endNodeId, path.ToArray());
     }
+}
+
+public record Path(long SourceNodeId, long TargetNodeId, INode[] Nodes) : IPathfinderResult;
+public record PathNode(long Id, uint CurrentDistance, PathNode? Parent, INode Node) : IComparable<PathNode>
+{
+    public int CompareTo(PathNode? other) => CurrentDistance.CompareTo(other?.CurrentDistance);
 }

@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.VisualBasic;
 using stuff.graph.net;
 
 namespace stuff.graph.serializable.net;
@@ -25,11 +26,22 @@ public static class Extensions
     public static SerializableLocation ToSerializable(this Vector3 vector)
         => new(vector.X, vector.Y, vector.Z);
 
-    public static IGraph To(this SerializableGraph graph)
+    public static IGraph To(this SerializableGraph serializableGraph)
     {
-        var nodes = graph.Nodes.Select(node => node.To()).ToDictionary(x => x.Id)!;
-        var edges = graph.Edges.Select(edge => edge.To()).ToDictionary(x => x.Id)!;
-        return new Graph() { Id = graph.Id, Edges = edges, Nodes = nodes };
+        var edges = serializableGraph.Edges.Select(edge => edge.To());
+        var nodes = serializableGraph.Nodes.Select(node => node.To());
+        var graph = new Graph();
+        foreach (var node in nodes)
+        {
+            graph.AddNode(node);
+        }
+
+        foreach(var edge in edges)
+        {
+            graph.AddEdge(edge);
+        }
+        
+        return graph with { Id = serializableGraph.Id };
     }
 
     public static IEdge To(this SerializableEdge edge)
@@ -65,7 +77,7 @@ public static class Extensions
 
     public static INode To(this SerializableNode node)
         => new Node() { Id = node.Id, Location = node.Location.To() };
-        
+
     public static Vector3 To(this SerializableLocation location)
         => new(location.X, location.Y, location.Z);
 }

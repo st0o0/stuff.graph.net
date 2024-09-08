@@ -11,8 +11,7 @@ namespace stuff.graph.tests
             var nodeA = Node.Create(1, 1, 2, 3);
             var nodeB = Node.Create(2, 4, 6, 8);
 
-            var heuristicArgs = new Heuristic.HeuristicArgs(nodeA, nodeB);
-            var result = Heuristic.MaxDXDYDZ(heuristicArgs);
+            var result = Heuristic.MaxDXDYDZ(nodeA, nodeB);
 
             Assert.Equal(5, result);  // Max difference in any single dimension
         }
@@ -23,8 +22,7 @@ namespace stuff.graph.tests
             var nodeA = Node.Create(1, 1, 2, 3);
             var nodeB = Node.Create(2, 4, 6, 8);
 
-            var heuristicArgs = new Heuristic.HeuristicArgs(nodeA, nodeB);
-            var result = Heuristic.DiagonalShortCut(heuristicArgs);
+            var result = Heuristic.DiagonalShortCut(nodeA, nodeB);
 
             Assert.Equal(10.243, result, 3);
         }
@@ -35,8 +33,7 @@ namespace stuff.graph.tests
             var nodeA = Node.Create(1, 1, 2, 3);
             var nodeB = Node.Create(2, 4, 6, 8);
 
-            var heuristicArgs = new Heuristic.HeuristicArgs(nodeA, nodeB);
-            var result = Heuristic.Euclidean(heuristicArgs);
+            var result = Heuristic.Euclidean(nodeA, nodeB);
 
             Assert.Equal(Math.Sqrt(50), result, 5);  // √((4-1)² + (6-2)² + (8-3)²)
         }
@@ -47,8 +44,7 @@ namespace stuff.graph.tests
             var nodeA = Node.Create(1, 1, 2, 3);
             var nodeB = Node.Create(2, 4, 6, 8);
 
-            var heuristicArgs = new Heuristic.HeuristicArgs(nodeA, nodeB);
-            var result = Heuristic.Manhatten(heuristicArgs);
+            var result = Heuristic.Manhatten(nodeA, nodeB);
 
             Assert.Equal(12, result);  // |4-1| + |6-2| + |8-3|
         }

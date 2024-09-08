@@ -31,7 +31,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<IPathfinderSettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(3)));
@@ -47,7 +47,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<IPathfinderSettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(4)));
@@ -63,7 +63,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<IPathfinderSettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
 
         // Entferne die Kanten, die den Zielknoten erreichbar machen
         graph.Edges.Remove(2);  // Entfernt die Kante BC
@@ -81,7 +81,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<IPathfinderSettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(1)));

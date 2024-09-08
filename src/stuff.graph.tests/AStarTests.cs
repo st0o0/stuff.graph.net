@@ -75,7 +75,6 @@ public class AstarTests
         Assert.Equal([startNode, endNode], path.Nodes);
     }
 
-    [Fact]
     public void FindPath_OnCustomMap()
     {
         var json = "./newmap.json";

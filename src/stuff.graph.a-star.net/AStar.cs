@@ -3,7 +3,7 @@ using stuff.graph.net;
 
 namespace stuff.graph.astar.net;
 
-public record AStarSettings(Func<INode, INode, double> Heuristic) : IPathfinderSettings;
+public record AStarSettings(Func<INode, INode, double> Heuristic) : ISettings;
 
 public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
 {
@@ -79,8 +79,9 @@ public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
         }
     }
 
-    private static Path ReconstructPath(PathNode currentNode)
+    private static Path ReconstructPath(PathNode? currentNode)
     {
+        ArgumentNullException.ThrowIfNull(currentNode);
         List<INode> path = [];
         while (currentNode != null)
         {

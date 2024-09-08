@@ -3,15 +3,15 @@ using stuff.graph.net;
 
 namespace stuff.graph.dijkstra.net;
 
-public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, IPathfinderSettings>
+public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings>
 {
     private readonly IGraph _graph;
-    private readonly IPathfinderSettings _settings;
+    private readonly ISettings _settings;
 
-    public static IPathfinder<IPathfinderResult, IPathfinderArguments, IPathfinderSettings> Create(IPathfinderConfig<IPathfinderSettings> config)
+    public static IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings> Create(IPathfinderConfig<ISettings> config)
         => new Dijkstra(config.Graph, config.Settings);
 
-    private Dijkstra(IGraph graph, IPathfinderSettings settings)
+    private Dijkstra(IGraph graph, ISettings settings)
     {
         _graph = graph;
         _settings = settings;

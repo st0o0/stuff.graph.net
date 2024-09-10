@@ -6,15 +6,13 @@ namespace stuff.graph.dijkstra.net;
 public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings>
 {
     private readonly IGraph _graph;
-    private readonly ISettings _settings;
 
-    public static IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings> Create(IPathfinderConfig<ISettings> config)
-        => new Dijkstra(config.Graph, config.Settings);
+    public static IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings> Create(IConfig config)
+        => new Dijkstra(config.Graph);
 
-    private Dijkstra(IGraph graph, ISettings settings)
+    private Dijkstra(IGraph graph)
     {
         _graph = graph;
-        _settings = settings;
     }
 
     public IPathfinderResult? GetShortestPath(IPathfinderArguments args)
@@ -42,10 +40,10 @@ public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISe
                 return ReconstructPath(currentNode);
             }
 
-            foreach (var edgeId in currentNode.Node.OutgoingEdgeIds)
+            foreach (var edgeId in node.OutgoingEdgeIds)
             {
                 var edge = _graph.GetEdge(edgeId);
-                if(edge is null) continue;
+                if (edge is null) continue;
                 var neighborNodeId = edge.EndNodeId;
 
                 var newDistance = currentNode.CurrentDistance + edge.RoutingCost + node.RoutingCost;
@@ -60,8 +58,9 @@ public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISe
         return null;
     }
 
-    private static Path ReconstructPath(PathNode currentNode)
+    private static Path ReconstructPath(PathNode? currentNode)
     {
+        ArgumentNullException.ThrowIfNull(currentNode);
         List<INode> path = [];
         while (currentNode != null)
         {
@@ -71,11 +70,10 @@ public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISe
         path.Reverse();
         var startNodeId = path[0].Id;
         var endNodeId = path[^1].Id;
-        return new Path(startNodeId, endNodeId, path.ToArray());
+        return new Path(startNodeId, endNodeId, [.. path]);
     }
 }
 
-public record Path(long SourceNodeId, long TargetNodeId, INode[] Nodes) : IPathfinderResult;
 public record PathNode(long Id, uint CurrentDistance, PathNode? Parent, INode Node) : IComparable<PathNode>
 {
     public int CompareTo(PathNode? other) => CurrentDistance.CompareTo(other?.CurrentDistance);

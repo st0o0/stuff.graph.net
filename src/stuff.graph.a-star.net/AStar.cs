@@ -3,14 +3,12 @@ using stuff.graph.net;
 
 namespace stuff.graph.astar.net;
 
-public record AStarSettings(Func<INode, INode, double> Heuristic) : ISettings;
-
-public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
+public class AStar : IPathfinder<Path, SearchPath, AStarSettings>, IUpdatable<AStarSettings>
 {
     private readonly IGraph _graph;
-    private readonly AStarSettings _settings;
+    private AStarSettings _settings;
 
-    public static IPathfinder<Path, SearchPath, AStarSettings> Create(IPathfinderConfig<AStarSettings> config)
+    public static IPathfinder<Path, SearchPath, AStarSettings> Create(IConfig<AStarSettings> config)
         => new AStar(config.Graph, config.Settings);
 
     private AStar(IGraph graph, AStarSettings settings)
@@ -19,8 +17,16 @@ public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
         _settings = settings;
     }
 
+    public bool Update(AStarSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        _settings = settings;
+        return true;
+    }
+
     public Path? GetShortestPath(SearchPath args)
     {
+        ArgumentNullException.ThrowIfNull(args);
         var start = args.SourceNode;
         var goal = args.TargetNode;
         var openSet = new PriorityQueue<PathNode>();
@@ -57,7 +63,7 @@ public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
                 }
                 else if (tentativeGScore < neighborNode.G)
                 {
-                    openSet.UpdatePriority(neighborNode, neighborNode.F);
+                    openSet.UpdatePriority(neighborNode with { G = tentativeGScore});
                 }
             }
         }
@@ -74,7 +80,7 @@ public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
         foreach (var edgeId in allEdgesIds)
         {
             var edge = _graph.GetEdge(edgeId);
-            if(edge is null) continue;
+            if (edge is null) continue;
             yield return _graph.GetNode(edge.EndNodeId);
         }
     }
@@ -101,8 +107,6 @@ public class AStar : IPathfinder<Path, SearchPath, AStarSettings>
         => _settings.Heuristic.Invoke(a, b);
 }
 
-public record SearchPath(INode SourceNode, INode TargetNode) : IPathfinderArguments;
-public record Path(long SourceNodeId, long TargetNodeId, INode[] Nodes) : IPathfinderResult;
 public record PathNode(long Id, double G, double H, PathNode? Parent, INode Node) : IComparable<PathNode>
 {
     public double F => G + H;

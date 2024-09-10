@@ -13,7 +13,7 @@ namespace stuff.graph.tests
 
             var result = Heuristic.MaxDXDYDZ(nodeA, nodeB);
 
-            Assert.Equal(5, result);  // Max difference in any single dimension
+            Assert.Equal(5, result);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace stuff.graph.tests
 
             var result = Heuristic.Euclidean(nodeA, nodeB);
 
-            Assert.Equal(Math.Sqrt(50), result, 5);  // √((4-1)² + (6-2)² + (8-3)²)
+            Assert.Equal(Math.Sqrt(50), result, 5);
         }
 
         [Fact]
@@ -43,10 +43,9 @@ namespace stuff.graph.tests
         {
             var nodeA = Node.Create(1, 1, 2, 3);
             var nodeB = Node.Create(2, 4, 6, 8);
-
             var result = Heuristic.Manhatten(nodeA, nodeB);
 
-            Assert.Equal(12, result);  // |4-1| + |6-2| + |8-3|
+            Assert.Equal(12, result);
         }
     }
 }

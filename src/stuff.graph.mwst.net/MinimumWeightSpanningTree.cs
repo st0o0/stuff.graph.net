@@ -3,10 +3,6 @@ using stuff.graph.net;
 
 namespace stuff.graph.mwst.net;
 
-public record MWSTResult(IEdge[] Edges) : IResult;
-
-public record MWSTConfig(IGraph Graph) : IConfig;
-
 public class MinimumSpanningTree : IAlgorithm<MinimumSpanningTree, MWSTConfig>
 {
     private readonly IGraph _graph;
@@ -32,7 +28,7 @@ public class MinimumSpanningTree : IAlgorithm<MinimumSpanningTree, MWSTConfig>
             }
         }
 
-        return new MWSTResult(mstEdges.ToArray());
+        return new MWSTResult([.. mstEdges]);
     }
 }
 

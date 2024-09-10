@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-
 namespace stuff.graph.algorithms.net;
 
 public class PriorityQueue<T> where T : IComparable<T>
@@ -30,7 +27,7 @@ public class PriorityQueue<T> where T : IComparable<T>
 
     public bool Contains(T item) => _elements.Contains(item); 
 
-    public void UpdatePriority(T item, double newPriority)
+    public void UpdatePriority(T item)
     {
         var index = _elements.IndexOf(item);
         if (index == -1)

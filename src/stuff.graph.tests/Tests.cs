@@ -35,19 +35,16 @@ public class GraphAlgorithmTests
         // Assert
         Assert.Equal(2, result.Length);
 
-        // Überprüfen der ersten Komponente
         var component1 = result.First();
         Assert.Equal(2, component1.Nodes.Count);
         Assert.True(component1.Nodes.Values.Any(node => node.Id == 1), "Die erste Komponente sollte den Knoten 1 enthalten.");
         Assert.True(component1.Nodes.Values.Any(node => node.Id == 2), "Die erste Komponente sollte den Knoten 2 enthalten.");
 
-        // Überprüfen der zweiten Komponente
         var component2 = result.Last();
         Assert.Equal(2, component2.Nodes.Count);
         Assert.True(component2.Nodes.Values.Any(node => node.Id == 3), "Die zweite Komponente sollte den Knoten 3 enthalten.");
         Assert.True(component2.Nodes.Values.Any(node => node.Id == 4), "Die zweite Komponente sollte den Knoten 4 enthalten.");
 
-        // Überprüfen, dass keine Knoten in mehr als einer Komponente vorhanden sind
         var allNodesInComponents = result.SelectMany(c => c.Nodes).Select(n => n.Key).ToHashSet();
         var allNodesInGraph = graph.Nodes.Keys.ToHashSet();
         Assert.Equal(allNodesInGraph, allNodesInComponents);
@@ -66,9 +63,7 @@ public class GraphAlgorithmTests
         Assert.True(result.NodeCosts[1] > result.NodeCosts[4], "Der PageRank des Knotens 1 sollte größer sein als der von Knoten 4.");
     }
 
-    // Hilfsmethoden zur Erstellung von Testgraphen
-
-    private static IGraph CreateTestGraphForMWST()
+    private static Graph CreateTestGraphForMWST()
     {
         var builder = GraphBuilder.Create(new GraphSettings(0, 0, 0));
         builder.CreateNode(1, new Vector3(0, 0, 0));
@@ -80,10 +75,10 @@ public class GraphAlgorithmTests
         builder.CreateEdge(3, 3, 4, 1);
         builder.CreateEdge(4, 1, 4, 5);
 
-        return builder.CreateGraph();
+        return (Graph)builder.CreateGraph();
     }
 
-    private static IGraph CreateTestGraphForWCC()
+    private static Graph CreateTestGraphForWCC()
     {
         var builder = GraphBuilder.Create(new GraphSettings(0, 0, 0));
         builder.CreateNode(1, new Vector3(0, 0, 0));
@@ -93,10 +88,10 @@ public class GraphAlgorithmTests
         builder.CreateEdge(1, 1, 2, 1);
         builder.CreateEdge(2, 3, 4, 1);
 
-        return builder.CreateGraph();
+        return (Graph)builder.CreateGraph();
     }
 
-    private static IGraph CreateTestGraphForPageRank()
+    private static Graph CreateTestGraphForPageRank()
     {
         var builder = GraphBuilder.Create(new GraphSettings(0, 0, 0));
         builder.CreateNode(1, new Vector3(0, 0, 0));
@@ -107,6 +102,6 @@ public class GraphAlgorithmTests
         builder.CreateEdge(2, 2, 3, 1);
         builder.CreateEdge(3, 3, 1, 1);
         builder.CreateEdge(4, 3, 4, 1);
-        return builder.CreateGraph();
+        return (Graph)builder.CreateGraph();
     }
 }

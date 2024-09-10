@@ -27,7 +27,7 @@ public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, W
             }
         }
 
-        return components.ToArray();
+        return [.. components];
     }
 
     private Graph ExploreComponent(long nodeId, HashSet<long> visited)

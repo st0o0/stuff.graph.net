@@ -1,4 +1,3 @@
-using stuff.graph.algorithms.net;
 using stuff.graph.astar.net;
 using stuff.graph.dijkstra.net;
 using stuff.graph.net;
@@ -7,7 +6,7 @@ namespace stuff.graph.tests;
 
 public class DijkstraTests
 {
-    private IGraph SetupGraph()
+    private static IGraph SetupGraph()
     {
         var builder = GraphBuilder.Create(new GraphSettings(1, 0, 0));
 
@@ -31,7 +30,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(3)));
@@ -47,7 +46,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(4)));
@@ -63,7 +62,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Entferne die Kanten, die den Zielknoten erreichbar machen
         graph.Edges.Remove(2);  // Entfernt die Kante BC
@@ -81,7 +80,7 @@ public class DijkstraTests
     {
         // Arrange
         var graph = SetupGraph();
-        var pathfinder = Dijkstra.Create(new PathfinderConfig<ISettings>(graph, new AStarSettings(Heuristic.DiagonalShortCut)));
+        var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(1)));

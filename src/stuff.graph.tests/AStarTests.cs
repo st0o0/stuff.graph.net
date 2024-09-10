@@ -1,16 +1,21 @@
 using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using stuff.graph.algorithms.net;
 using stuff.graph.astar.net;
 using stuff.graph.net;
 using stuff.graph.serializable.net;
+using stuff.graph.wcc.net;
+using Xunit.Abstractions;
 
 namespace stuff.graph.tests;
 
-public class AstarTests
+public partial class AstarTests
 {
+    private readonly ITestOutputHelper _output;
+
+    public AstarTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Fact]
     public void FindPath_ShouldReturnCorrectPath_WhenPathExists()
     {
@@ -25,7 +30,7 @@ public class AstarTests
         var graph = builder.CreateGraph();
 
         var settings = new AStarSettings(Heuristic.Manhatten);
-        var astar = AStar.Create(new PathfinderConfig<AStarSettings>(graph, settings));
+        var astar = AStar.Create(new AStarConfig(graph, settings));
 
         // Act
         var path = astar.GetShortestPath(new SearchPath(startNode, endNode));
@@ -45,7 +50,7 @@ public class AstarTests
         var isolatedNode = builder.CreateNode(2, 10, 10, 10);
         var graph = builder.CreateGraph();
         var settings = new AStarSettings(Heuristic.Manhatten);
-        var astar = AStar.Create(new PathfinderConfig<AStarSettings>(graph, settings));
+        var astar = AStar.Create(new AStarConfig(graph, settings));
 
         // Act
         var path = astar.GetShortestPath(new SearchPath(startNode, isolatedNode));
@@ -64,7 +69,7 @@ public class AstarTests
         var edge = builder.CreateEdge(1, startNode.Id, endNode.Id);
         var graph = builder.CreateGraph();
         var settings = new AStarSettings(Heuristic.Manhatten);
-        var astar = AStar.Create(new PathfinderConfig<AStarSettings>(graph, settings));
+        var astar = AStar.Create(new AStarConfig(graph, settings));
 
         // Act
         var path = astar.GetShortestPath(new SearchPath(startNode, endNode));
@@ -75,39 +80,29 @@ public class AstarTests
         Assert.Equal([startNode, endNode], path.Nodes);
     }
 
-    public void FindPath_OnCustomMap()
+    [Fact]
+    public void Test_WCC_AStar_On_CustomMap()
     {
         var json = "./newmap.json";
         var jsonGraph = MapLoader.Load(json);
         var graph = jsonGraph.To();
 
-        var settings = new AStarSettings(Heuristic.Manhatten);
-        var astar = AStar.Create(new PathfinderConfig<AStarSettings>(graph, settings));
-
-        var maxNodeId = graph.Nodes.Values.Max(x => x.Id);
-        var paths = Enumerable.Range(1, (int)maxNodeId).SelectMany(source =>
-        {
-            var sourceNode = graph.GetNode(source);
-            return Enumerable.Range(1, (int)maxNodeId).Select(target =>
-            {
-                Debug.Print($"{source:d4} -> {target:d4}");
-                return astar.GetShortestPath(new SearchPath(sourceNode, graph.GetNode(target)));
-            });
-        }).Where(x => x is not null).ToArray();
-        // Assert
-        Assert.NotEmpty(paths);
-    }
-
-    public static class MapLoader
-    {
-        public static SerializableGraph Load(string json)
-        {
-            return JsonSerializer.Deserialize<SerializableGraph>(File.ReadAllText(json))!;
-        }
-
-        public static void Write(string json, SerializableGraph serializableGraph)
-        {
-            File.AppendAllText(json, JsonSerializer.Serialize(serializableGraph));
-        }
+        var algo = WeaklyConnectedComponents.Create(new WCCConfig(graph));
+        var watch = new Stopwatch();
+        watch.Start();
+        var result = algo.Find();
+        _output.WriteLine($"WCC: {watch.ElapsedMilliseconds}ms");
+        Assert.Equal(2, result.Length);
+        var biggestGraph = result.OrderByDescending(x => x.Edges.Count + x.Nodes.Count).First();
+        var source = biggestGraph.Nodes.Min(x => x.Key);
+        var target = biggestGraph.Nodes.Max(x => x.Key);
+        var a = AStar.Create(new AStarConfig(biggestGraph, new AStarSettings(Heuristic.Manhatten)));
+        watch.Restart();
+        var path = a.GetShortestPath(new SearchPath(biggestGraph.GetNode(source), biggestGraph.GetNode(target)));
+        watch.Stop();
+        _output.WriteLine($"a*: {watch.ElapsedMilliseconds}ms");
+        Assert.NotNull(path);
+        Assert.NotEmpty(path.Nodes);
+        Assert.Equal(96, path.Nodes.Length);
     }
 }

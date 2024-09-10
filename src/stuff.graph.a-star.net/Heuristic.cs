@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using stuff.graph.net;
 
 namespace stuff.graph.astar.net;
@@ -20,21 +19,16 @@ public static class Heuristic
         var aLocation = a.Location;
         var bLocation = b.Location;
 
-        // Differenzen in den Koordinaten
         var dx = Math.Abs(aLocation.X - bLocation.X);
         var dy = Math.Abs(aLocation.Y - bLocation.Y);
         var dz = Math.Abs(aLocation.Z - bLocation.Z);
 
-        // Erster Schritt: Minimiere Bewegungen entlang aller Achsen (drei diagonal möglich)
         var minXY = Math.Min(dx, dy);
         var minXZ = Math.Min(dx, dz);
         var minYZ = Math.Min(dy, dz);
 
-        // Zweiter Schritt: Diagonale Bewegungen, die restliche Bewegung ist entlang einer Achse
         var diagonalMoves = Math.Min(minXY, Math.Min(minXZ, minYZ));
         var straightMoves = dx + dy + dz - 2 * diagonalMoves;
-
-        // Rückgabe der berechneten Distanz
         return diagonalMoves * Math.Sqrt(2) + straightMoves;
     }
 

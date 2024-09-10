@@ -1,6 +1,7 @@
 using System.Numerics;
+using stuff.graph.net;
 
-namespace stuff.graph.net;
+namespace stuff.graph.tests;
 
 public class GraphBuilder
 {
@@ -30,12 +31,4 @@ public class GraphBuilder
     public IGraph CreateGraph(Guid? id = null) => _graph with { Id = id ?? Guid.NewGuid() };
     private uint GetEdgeCost(uint routingCost) => _settings.BaseCost + _settings.AdditionalEdgeCost + routingCost;
     private uint GetNodeCost(uint routingCost) => _settings.BaseCost + _settings.AdditionalNodeCost + routingCost;
-}
-
-public record GraphSettings(uint BaseCost, uint AdditionalNodeCost, uint AdditionalEdgeCost);
-
-public static class GraphBuilderExtensions
-{
-    public static INode CreateNode(this GraphBuilder builder, long id, float x, float y, float z)
-        => builder.CreateNode(id, new Vector3(x, y, z));
 }

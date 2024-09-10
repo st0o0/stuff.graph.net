@@ -3,10 +3,6 @@ using stuff.graph.net;
 
 namespace stuff.graph.pagerank.net;
 
-public record PageRankSettings(double DampingFactor, double Tolerance, int MaxIterations) : ISettings;
-
-public record PageRankConfig(IGraph Graph, PageRankSettings Settings) : IConfig<PageRankSettings>;
-
 public record PageRankResult(Dictionary<long, double> NodeCosts) : IResult;
 
 public class PageRank : IAlgorithm<PageRank, PageRankConfig> 
@@ -51,10 +47,7 @@ public class PageRank : IAlgorithm<PageRank, PageRankConfig>
                 }
             }
 
-            var temp = pageRank;
-            pageRank = newPageRank;
-            newPageRank = temp;
-
+            (newPageRank, pageRank) = (pageRank, newPageRank);
             if (converged)
             {
                 break;

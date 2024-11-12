@@ -7,4 +7,3 @@ public enum EdgeDirection
     TwoWay = 2,
     Blocked = 3,
 }
-

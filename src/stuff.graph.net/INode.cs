@@ -5,10 +5,8 @@ namespace stuff.graph.net;
 public interface INode
 {
     long Id { get; }
-    long[] OutgoingEdgeIds { get; }
-    long[] IncomingEdgeIds { get; }
+    long[] OutgoingEdgeIds { get; set; }
+    long[] IncomingEdgeIds { get; set; }
     uint RoutingCost { get; }
     Vector3 Location { get; }
-    void AddIncoming(long id);
-    void AddOutgoing(long id);
 }

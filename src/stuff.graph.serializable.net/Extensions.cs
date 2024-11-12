@@ -1,6 +1,4 @@
 using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.VisualBasic;
 using stuff.graph.net;
 
 namespace stuff.graph.serializable.net;
@@ -10,6 +8,7 @@ public static class Extensions
     public static SerializableGraph ToSerializable(this IGraph graph)
         => new(graph.Id, graph.Edges.Select(item => item.Value.ToSerializable()).ToArray(), graph.Nodes.Select(item => item.Value
         .ToSerializable()).ToArray());
+        
     public static SerializableEdge ToSerializable(this IEdge value)
         => value switch
         {
@@ -17,12 +16,16 @@ public static class Extensions
             Edge edge => edge.ToSerializable(),
             _ => throw new NotImplementedException(),
         };
+
     public static SerializableEdge ToSerializable(this Edge edge)
-        => new(edge.Id, edge.StartNodeId, edge.EndNodeId, edge.RoutingCost);
+        => new(edge.Id, edge.StartNodeId, edge.EndNodeId, edge.RoutingCost, edge.GetDirection());
+    
     public static SerializableEdge ToSerializable(this DirectedEdge edge)
         => new(edge.Id, edge.StartNodeId, edge.EndNodeId, edge.RoutingCost, edge.Direction);
+    
     public static SerializableNode ToSerializable(this INode node)
         => new(node.Id, node.Location.ToSerializable());
+    
     public static SerializableLocation ToSerializable(this Vector3 vector)
         => new(vector.X, vector.Y, vector.Z);
 
@@ -36,11 +39,11 @@ public static class Extensions
             graph.AddNode(node);
         }
 
-        foreach(var edge in edges)
+        foreach (var edge in edges)
         {
             graph.AddEdge(edge);
         }
-        
+
         return graph with { Id = serializableGraph.Id };
     }
 

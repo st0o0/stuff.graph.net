@@ -2,6 +2,7 @@ using System.Numerics;
 using stuff.graph.mwst.net;
 using stuff.graph.net;
 using stuff.graph.pagerank.net;
+using stuff.graph.algorithms.net;
 using stuff.graph.wcc.net;
 
 namespace stuff.graph.tests;
@@ -9,11 +10,11 @@ namespace stuff.graph.tests;
 public class GraphAlgorithmTests
 {
     [Fact]
-    public void TestKruskalAlgorithm()
+    public void TestMinimumWeightSpanningTreeAlgorithm()
     {
         // Arrange
         var graph = CreateTestGraphForMWST();
-        var algo = MinimumSpanningTree.Create(new MWSTConfig(graph));
+        var algo = MinimumWeightSpanningTree.Create(new MWSTConfig(graph));
         var result = algo.Find();
         // Assert
         Assert.Equal(3, result.Edges.Length);
@@ -37,13 +38,13 @@ public class GraphAlgorithmTests
 
         var component1 = result.First();
         Assert.Equal(2, component1.Nodes.Count);
-        Assert.True(component1.Nodes.Values.Any(node => node.Id == 1), "Die erste Komponente sollte den Knoten 1 enthalten.");
-        Assert.True(component1.Nodes.Values.Any(node => node.Id == 2), "Die erste Komponente sollte den Knoten 2 enthalten.");
+        Assert.Contains(1, component1.Nodes.Keys);
+        Assert.Contains(2, component1.Nodes.Keys);
 
         var component2 = result.Last();
         Assert.Equal(2, component2.Nodes.Count);
-        Assert.True(component2.Nodes.Values.Any(node => node.Id == 3), "Die zweite Komponente sollte den Knoten 3 enthalten.");
-        Assert.True(component2.Nodes.Values.Any(node => node.Id == 4), "Die zweite Komponente sollte den Knoten 4 enthalten.");
+        Assert.Contains(3, component2.Nodes.Keys);
+        Assert.Contains(4, component2.Nodes.Keys);
 
         var allNodesInComponents = result.SelectMany(c => c.Nodes).Select(n => n.Key).ToHashSet();
         var allNodesInGraph = graph.Nodes.Keys.ToHashSet();
@@ -59,8 +60,8 @@ public class GraphAlgorithmTests
         var result = algo.Calculate();
         // Assert
         Assert.Equal(4, result.NodeCosts.Count);
-        Assert.True(result.NodeCosts.Values.All(pr => pr >= 0 && pr <= 1), "Alle PageRank-Werte sollten zwischen 0 und 1 liegen.");
-        Assert.True(result.NodeCosts[1] > result.NodeCosts[4], "Der PageRank des Knotens 1 sollte größer sein als der von Knoten 4.");
+        Assert.True(result.NodeCosts.Values.All(pr => pr >= 0 && pr <= 1));
+        Assert.True(result.NodeCosts[1] > result.NodeCosts[4]);
     }
 
     private static Graph CreateTestGraphForMWST()
@@ -75,7 +76,7 @@ public class GraphAlgorithmTests
         builder.CreateEdge(3, 3, 4, 1);
         builder.CreateEdge(4, 1, 4, 5);
 
-        return (Graph)builder.CreateGraph();
+        return builder.CreateGraph();
     }
 
     private static Graph CreateTestGraphForWCC()
@@ -88,7 +89,7 @@ public class GraphAlgorithmTests
         builder.CreateEdge(1, 1, 2, 1);
         builder.CreateEdge(2, 3, 4, 1);
 
-        return (Graph)builder.CreateGraph();
+        return builder.CreateGraph();
     }
 
     private static Graph CreateTestGraphForPageRank()
@@ -102,6 +103,6 @@ public class GraphAlgorithmTests
         builder.CreateEdge(2, 2, 3, 1);
         builder.CreateEdge(3, 3, 1, 1);
         builder.CreateEdge(4, 3, 4, 1);
-        return (Graph)builder.CreateGraph();
+        return builder.CreateGraph();
     }
 }

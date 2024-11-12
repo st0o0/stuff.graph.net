@@ -3,14 +3,13 @@ using stuff.graph.net;
 
 namespace stuff.graph.pagerank.net;
 
-public record PageRankResult(Dictionary<long, double> NodeCosts) : IResult;
-
-public class PageRank : IAlgorithm<PageRank, PageRankConfig> 
+public class PageRank : IAlgorithm<PageRank, PageRankConfig>
 {
     private readonly IGraph _graph;
     private readonly PageRankSettings _settings;
 
-    public static PageRank Create(PageRankConfig config) => new(config.Graph, config.Settings);
+    public static PageRank Create(PageRankConfig config)
+        => new(config.Graph, config.Settings);
 
     private PageRank(IGraph graph, PageRankSettings settings)
     {

@@ -2,7 +2,7 @@ namespace stuff.graph.algorithms.net;
 
 public class PriorityQueue<T> where T : IComparable<T>
 {
-    private List<T> _elements = [];
+    private readonly List<T> _elements = [];
 
     public int Count => _elements.Count;
 
@@ -25,7 +25,15 @@ public class PriorityQueue<T> where T : IComparable<T>
         return item;
     }
 
-    public bool Contains(T item) => _elements.Contains(item); 
+    public bool Contains(T item, Func<T, T, bool>? func = null)
+    {
+        if (func is null)
+        {
+            return _elements.Contains(item);
+        }
+
+        return _elements.Any(value => func.Invoke(value, item));
+    }
 
     public void UpdatePriority(T item)
     {

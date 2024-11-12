@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using stuff.graph.astar.net;
-using stuff.graph.net;
+using stuff.graph.algorithms.net;
 using stuff.graph.serializable.net;
 using stuff.graph.wcc.net;
+using stuff.graph.net;
+using stuff.graph.erdosrenyi.net;
 using Xunit.Abstractions;
 
 namespace stuff.graph.tests;
@@ -94,15 +96,27 @@ public partial class AstarTests
         _output.WriteLine($"WCC: {watch.ElapsedMilliseconds}ms");
         Assert.Equal(2, result.Length);
         var biggestGraph = result.OrderByDescending(x => x.Edges.Count + x.Nodes.Count).First();
-        var source = biggestGraph.Nodes.Min(x => x.Key);
-        var target = biggestGraph.Nodes.Max(x => x.Key);
+        var source = biggestGraph.Nodes.Values.ToArray()[0];
+        var target = biggestGraph.Nodes.Values.ToArray()[^1];
         var a = AStar.Create(new AStarConfig(biggestGraph, new AStarSettings(Heuristic.Manhatten)));
         watch.Restart();
-        var path = a.GetShortestPath(new SearchPath(biggestGraph.GetNode(source), biggestGraph.GetNode(target)));
+        var path = a.GetShortestPath(new SearchPath(source, target));
         watch.Stop();
         _output.WriteLine($"a*: {watch.ElapsedMilliseconds}ms");
         Assert.NotNull(path);
         Assert.NotEmpty(path.Nodes);
-        Assert.Equal(96, path.Nodes.Length);
+        Assert.Equal(99, path.Nodes.Length);
+    }
+
+    [Fact]
+    public void Test()
+    {
+        var graph = ErdosRenyi.Create().Generate(new(1000));
+        var source = graph.Nodes.Values.ToArray()[0];
+        var target = graph.Nodes.Values.ToArray()[^1];
+        var algo = AStar.Create(new AStarConfig(graph, new AStarSettings(Heuristic.Manhatten)));
+        var result = algo.GetShortestPath(new SearchPath(source, target));
+        Assert.NotNull(result);
+        Assert.NotEmpty(result.Nodes);
     }
 }

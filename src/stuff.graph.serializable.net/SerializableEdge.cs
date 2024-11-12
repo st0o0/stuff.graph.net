@@ -8,4 +8,4 @@ public record SerializableEdge(
     [property: JsonPropertyName("startNodeId")] long StartNodeId,
     [property: JsonPropertyName("endNodeId")] long EndNodeId,
     [property: JsonPropertyName("additionalRoutingCost")] uint RoutingCost,
-    [property: JsonPropertyName("allowedDirection")] EdgeDirection Direction = EdgeDirection.TwoWay);
+    [property: JsonPropertyName("allowedDirection")] EdgeDirection Direction);

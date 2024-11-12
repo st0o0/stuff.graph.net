@@ -6,7 +6,9 @@ public record Edge : IEdge
         => new() { Id = id, StartNodeId = startId, EndNodeId = endId, RoutingCost = cost };
 
     public long Id { get; init; }
-    public required long StartNodeId { get; init; }
-    public required long EndNodeId { get; init; }
+    public long StartNodeId { get; init; }
+    public long EndNodeId { get; init; }
     public uint RoutingCost { get; init; }
+
+    public virtual EdgeDirection GetDirection() => EdgeDirection.TwoWay;
 }

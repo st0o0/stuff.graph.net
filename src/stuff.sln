@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.net", "stuff.gr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.serializable.net", "stuff.graph.serializable.net\stuff.graph.serializable.net.csproj", "{6BCCF06A-2D61-481F-A810-726CAAD068BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.astar.net", "stuff.graph.a-star.net\stuff.graph.astar.net.csproj", "{104C5739-B8BB-432F-929C-617E26984695}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.astar.net", "stuff.graph.astar.net\stuff.graph.astar.net.csproj", "{104C5739-B8BB-432F-929C-617E26984695}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.dijkstra.net", "stuff.graph.dijkstra.net\stuff.graph.dijkstra.net.csproj", "{59C5C517-FB4E-49E3-A90A-B541217F740C}"
 EndProject
@@ -20,6 +20,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.wcc.net", "stuff.graph.wcc.net\stuff.graph.wcc.net.csproj", "{AF74584F-D9D4-41C5-97E7-692272374A9C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.pagerank.net", "stuff.graph.pagerank.net\stuff.graph.pagerank.net.csproj", "{F3B62F6A-1148-4DBF-BFFC-A473F82C8D32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.dorogovtsevmendes.net", "stuff.graph.dorogovtsevmendes.net\stuff.graph.dorogovtsevmendes.net.csproj", "{A2ECD9DB-FB12-405A-88E0-206BAA87854A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.erdosrenyi.net", "stuff.graph.erdosrenyi.net\stuff.graph.erdosrenyi.net.csproj", "{4F036B60-A23D-4143-BAA1-995B92070C1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.wattsstrogatz.net", "stuff.graph.wattsstrogatz.net\stuff.graph.wattsstrogatz.net.csproj", "{F630C1DC-1183-40D4-B881-8A7DAC874556}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stuff.graph.cost.net", "stuff.graph.cost.net\stuff.graph.cost.net.csproj", "{24EBAEC5-EA62-48B3-881A-47290012E927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +71,22 @@ Global
 		{F3B62F6A-1148-4DBF-BFFC-A473F82C8D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3B62F6A-1148-4DBF-BFFC-A473F82C8D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3B62F6A-1148-4DBF-BFFC-A473F82C8D32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2ECD9DB-FB12-405A-88E0-206BAA87854A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2ECD9DB-FB12-405A-88E0-206BAA87854A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2ECD9DB-FB12-405A-88E0-206BAA87854A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2ECD9DB-FB12-405A-88E0-206BAA87854A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F036B60-A23D-4143-BAA1-995B92070C1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F036B60-A23D-4143-BAA1-995B92070C1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F036B60-A23D-4143-BAA1-995B92070C1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F036B60-A23D-4143-BAA1-995B92070C1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F630C1DC-1183-40D4-B881-8A7DAC874556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F630C1DC-1183-40D4-B881-8A7DAC874556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F630C1DC-1183-40D4-B881-8A7DAC874556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F630C1DC-1183-40D4-B881-8A7DAC874556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24EBAEC5-EA62-48B3-881A-47290012E927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24EBAEC5-EA62-48B3-881A-47290012E927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24EBAEC5-EA62-48B3-881A-47290012E927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24EBAEC5-EA62-48B3-881A-47290012E927}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

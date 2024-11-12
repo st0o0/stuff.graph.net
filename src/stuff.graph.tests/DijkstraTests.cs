@@ -1,11 +1,23 @@
+using System.Diagnostics;
 using stuff.graph.astar.net;
 using stuff.graph.dijkstra.net;
 using stuff.graph.net;
+using stuff.graph.serializable.net;
+using stuff.graph.wcc.net;
+using Xunit.Abstractions;
+using stuff.graph.algorithms.net;
+using static stuff.graph.tests.AstarTests;
 
 namespace stuff.graph.tests;
 
 public class DijkstraTests
 {
+    private readonly ITestOutputHelper _output;
+    public DijkstraTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     private static IGraph SetupGraph()
     {
         var builder = GraphBuilder.Create(new GraphSettings(1, 0, 0));
@@ -64,15 +76,14 @@ public class DijkstraTests
         var graph = SetupGraph();
         var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
-        // Entferne die Kanten, die den Zielknoten erreichbar machen
-        graph.Edges.Remove(2);  // Entfernt die Kante BC
-        graph.Edges.Remove(4);  // Entfernt die Kante DC
+        graph.Edges.Remove(2);
+        graph.Edges.Remove(4);
 
         // Act
         var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(3)));
 
         // Assert
-        Assert.Null(shortestPath);  // Es sollte keinen Pfad geben
+        Assert.Null(shortestPath);
     }
 
     [Fact]
@@ -89,5 +100,31 @@ public class DijkstraTests
         var expectedPath = new List<long> { 1 };
         Assert.NotNull(shortestPath);
         Assert.Equal(expectedPath, shortestPath.Nodes.Select(x => x.Id));
+    }
+
+    [Fact]
+    public void Test_WCC_Dijkstra_On_CustomMap()
+    {
+        var json = "./newmap.json";
+        var jsonGraph = MapLoader.Load(json);
+        var graph = jsonGraph.To();
+
+        var algo = WeaklyConnectedComponents.Create(new WCCConfig(graph));
+        var watch = new Stopwatch();
+        watch.Start();
+        var result = algo.Find();
+        _output.WriteLine($"WCC: {watch.ElapsedMilliseconds}ms");
+        Assert.Equal(2, result.Length);
+        var biggestGraph = result.OrderByDescending(x => x.Edges.Count + x.Nodes.Count).First();
+        var source = biggestGraph.Nodes.Min(x => x.Key);
+        var target = biggestGraph.Nodes.Max(x => x.Key);
+        var a = Dijkstra.Create(new DijkstraConfig(biggestGraph));
+        watch.Restart();
+        var path = a.GetShortestPath(new SearchPath(biggestGraph.GetNode(source), biggestGraph.GetNode(target)));
+        watch.Stop();
+        _output.WriteLine($"dijkstra: {watch.ElapsedMilliseconds}ms");
+        Assert.NotNull(path);
+        Assert.NotEmpty(path.Nodes);
+        Assert.Equal(96, path.Nodes.Length);
     }
 }

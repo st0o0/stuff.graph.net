@@ -11,10 +11,5 @@ public partial class AstarTests
         {
             return JsonSerializer.Deserialize<SerializableGraph>(File.ReadAllText(json))!;
         }
-
-        public static void Write(string json, SerializableGraph serializableGraph)
-        {
-            File.AppendAllText(json, JsonSerializer.Serialize(serializableGraph));
-        }
     }
 }

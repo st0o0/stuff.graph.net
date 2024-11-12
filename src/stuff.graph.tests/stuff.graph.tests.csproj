@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -24,12 +25,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\stuff.graph.a-star.net\stuff.graph.astar.net.csproj" />
-    <ProjectReference Include="..\stuff.graph.dijkstra.net\stuff.graph.dijkstra.net.csproj" />
     <ProjectReference Include="..\stuff.graph.serializable.net\stuff.graph.serializable.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.astar.net\stuff.graph.astar.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.dijkstra.net\stuff.graph.dijkstra.net.csproj" />
     <ProjectReference Include="..\stuff.graph.mwst.net\stuff.graph.mwst.net.csproj" />
     <ProjectReference Include="..\stuff.graph.pagerank.net\stuff.graph.pagerank.net.csproj" />
     <ProjectReference Include="..\stuff.graph.wcc.net\stuff.graph.wcc.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.dorogovtsevmendes.net\stuff.graph.dorogovtsevmendes.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.erdosrenyi.net\stuff.graph.erdosrenyi.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.wattsstrogatz.net\stuff.graph.wattsstrogatz.net.csproj" />
   </ItemGroup>
 
   <ItemGroup>

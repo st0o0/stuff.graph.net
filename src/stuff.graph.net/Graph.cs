@@ -9,7 +9,7 @@ public record Graph : IGraph
 
 public interface IGraph
 {
-    Guid Id { get; init; }
+    Guid Id { get; }
     Dictionary<long, IEdge> Edges { get; set; }
     Dictionary<long, INode> Nodes { get; set; }
 }

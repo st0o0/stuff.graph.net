@@ -3,11 +3,13 @@ using stuff.graph.net;
 
 namespace stuff.graph.dijkstra.net;
 
-public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings>
+public class Dijkstra : ISearch<ISearchResult, ISearchArgs, ISettings>
 {
     private readonly IGraph _graph;
+    private INodeCostService? _nodeCostService;
+    private IEdgeCostService? _edgeCostService;
 
-    public static IPathfinder<IPathfinderResult, IPathfinderArguments, ISettings> Create(IConfig config)
+    public static ISearch<ISearchResult, ISearchArgs, ISettings> Create(ISearchConfig config)
         => new Dijkstra(config.Graph);
 
     private Dijkstra(IGraph graph)
@@ -15,7 +17,13 @@ public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISe
         _graph = graph;
     }
 
-    public IPathfinderResult? GetShortestPath(IPathfinderArguments args)
+    public void Inject(INodeCostService item)
+        => _nodeCostService = item;
+
+    public void Inject(IEdgeCostService item)
+        => _edgeCostService = item;
+
+    public ISearchResult? GetShortestPath(ISearchArgs args)
     {
         var source = args.SourceNode;
         var target = args.TargetNode;
@@ -67,6 +75,7 @@ public class Dijkstra : IPathfinder<IPathfinderResult, IPathfinderArguments, ISe
             path.Add(currentNode.Node);
             currentNode = currentNode.Parent;
         }
+
         path.Reverse();
         var startNodeId = path[0].Id;
         var endNodeId = path[^1].Id;

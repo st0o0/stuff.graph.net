@@ -6,7 +6,7 @@ namespace stuff.graph.wcc.net;
 public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, WCCConfig>
 {
     private readonly IGraph _graph;
-    public static WeaklyConnectedComponents Create(IConfig config) => new(config.Graph);
+    public static WeaklyConnectedComponents Create(WCCConfig config) => new(config.Graph);
 
     private WeaklyConnectedComponents(IGraph graph)
     {
@@ -44,7 +44,6 @@ public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, W
             var currentNodeId = queue.Dequeue();
             var currentNode = _graph.Nodes[currentNodeId];
 
-            // Füge Knoten zur Komponente hinzu
             if (!componentNodes.Contains(currentNode))
             {
                 componentNodes.Add(currentNode);
@@ -58,7 +57,6 @@ public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, W
                 {
                     var adjacentNodeId = edge.StartNodeId == currentNodeId ? edge.EndNodeId : edge.StartNodeId;
 
-                    // Füge Kante zur Komponente hinzu
                     if (!componentEdges.Contains(edge))
                     {
                         componentEdges.Add(edge);
@@ -73,7 +71,6 @@ public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, W
             }
         }
 
-        // Erstellen des Graphen für die gefundene Komponente
         return new Graph
         {
             Id = Guid.NewGuid(),

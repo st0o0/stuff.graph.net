@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using stuff.graph.astar.net;
 using stuff.graph.dijkstra.net;
 using stuff.graph.net;
 using stuff.graph.serializable.net;
@@ -18,22 +17,30 @@ public class DijkstraTests
         _output = output;
     }
 
-    private static IGraph SetupGraph()
+    private static Graph SetupGraph()
     {
         var builder = GraphBuilder.Create(new GraphSettings(1, 0, 0));
 
-        // Knoten erstellen
         var nodeA = builder.CreateNode(1, 0, 0, 0);
         var nodeB = builder.CreateNode(2, 1, 0, 0);
         var nodeC = builder.CreateNode(3, 2, 0, 0);
         var nodeD = builder.CreateNode(4, 1, 1, 0);
 
-        // Kanten erstellen
         var edgeAB = builder.CreateEdge(1, 1, 2, 1);
         var edgeBC = builder.CreateEdge(2, 2, 3, 2);
         var edgeAD = builder.CreateEdge(3, 1, 4, 4);
         var edgeDC = builder.CreateEdge(4, 4, 3, 1);
+        nodeA.AddOutgoing(edgeAB.Id);
+        nodeB.AddIncoming(edgeAB.Id);
 
+        nodeB.AddOutgoing(edgeBC.Id);
+        nodeC.AddIncoming(edgeBC.Id);
+
+        nodeA.AddOutgoing(edgeAD.Id);
+        nodeD.AddIncoming(edgeAD.Id);
+
+        nodeD.AddOutgoing(edgeDC.Id);
+        nodeC.AddIncoming(edgeDC.Id);
         return builder.CreateGraph();
     }
 
@@ -45,7 +52,7 @@ public class DijkstraTests
         var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Act
-        var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(3)));
+        var shortestPath = pathfinder.GetShortestPath(new SearchArgs(graph.GetNode(1), graph.GetNode(3)));
 
         // Assert
         var expectedPath = new List<long> { 1, 2, 3 };
@@ -61,7 +68,7 @@ public class DijkstraTests
         var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Act
-        var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(4)));
+        var shortestPath = pathfinder.GetShortestPath(new SearchArgs(graph.GetNode(1), graph.GetNode(4)));
 
         // Assert
         var expectedPath = new List<long> { 1, 4 };
@@ -80,10 +87,11 @@ public class DijkstraTests
         graph.Edges.Remove(4);
 
         // Act
-        var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(3)));
+        var path = pathfinder.GetShortestPath(new SearchArgs(graph.GetNode(1), graph.GetNode(3)));
 
         // Assert
-        Assert.Null(shortestPath);
+        Assert.NotNull(path);
+        Assert.Empty(path.Nodes);
     }
 
     [Fact]
@@ -94,7 +102,7 @@ public class DijkstraTests
         var pathfinder = Dijkstra.Create(new DijkstraConfig(graph));
 
         // Act
-        var shortestPath = pathfinder.GetShortestPath(new SearchPath(graph.GetNode(1), graph.GetNode(1)));
+        var shortestPath = pathfinder.GetShortestPath(new SearchArgs(graph.GetNode(1), graph.GetNode(1)));
 
         // Assert
         var expectedPath = new List<long> { 1 };
@@ -120,7 +128,7 @@ public class DijkstraTests
         var target = biggestGraph.Nodes.Max(x => x.Key);
         var a = Dijkstra.Create(new DijkstraConfig(biggestGraph));
         watch.Restart();
-        var path = a.GetShortestPath(new SearchPath(biggestGraph.GetNode(source), biggestGraph.GetNode(target)));
+        var path = a.GetShortestPath(new SearchArgs(biggestGraph.GetNode(source), biggestGraph.GetNode(target)));
         watch.Stop();
         _output.WriteLine($"dijkstra: {watch.ElapsedMilliseconds}ms");
         Assert.NotNull(path);

@@ -58,7 +58,7 @@ public static class Extensions
 
     private static Edge CreateEdge(SerializableEdge edge)
     {
-        return new Edge()
+        return new Edge
         {
             Id = edge.Id,
             StartNodeId = edge.StartNodeId,
@@ -68,7 +68,7 @@ public static class Extensions
     }
     private static DirectedEdge CreateDirectedEdge(SerializableEdge edge)
     {
-        return new DirectedEdge()
+        return new DirectedEdge
         {
             Id = edge.Id,
             StartNodeId = edge.StartNodeId,
@@ -79,7 +79,7 @@ public static class Extensions
     }
 
     public static INode To(this SerializableNode node)
-        => new Node() { Id = node.Id, Location = node.Location.To() };
+        => new Node { Id = node.Id, Location = node.Location.To() };
 
     public static Vector3 To(this SerializableLocation location)
         => new(location.X, location.Y, location.Z);

@@ -4,7 +4,7 @@ using stuff.graph.net;
 
 namespace stuff.graph.wattsstrogatz.net;
 
-public class WattsStrogatz : IGenerator<Graph, IGeneratorArgs, IGeneratorConfig<WattsStrogatzSettings>>
+public class WattsStrogatz : IWattsStrogatz
 {
     private readonly WattsStrogatzSettings _settings;
     public static IGenerator<Graph, IGeneratorArgs, IGeneratorConfig<WattsStrogatzSettings>> Create(IGeneratorConfig<WattsStrogatzSettings> config)
@@ -40,28 +40,26 @@ public class WattsStrogatz : IGenerator<Graph, IGeneratorArgs, IGeneratorConfig<
         {
             for (var j = 1; j <= numberOfNodes / 2; j++)
             {
-                if (rand.NextDouble() < _settings.Beta)
-                {
-                    var oldNeighbor = (i + j) % numberOfNodes;
+                if (!(rand.NextDouble() < _settings.Beta)) continue;
+                var oldNeighbor = (i + j) % numberOfNodes;
 
-                    var possibleNeighbors = Enumerable
-                                                .Range(0, (int)numberOfNodes)
-                                                .Where(n => n != i && !builder.Nodes[i].OutgoingEdgeIds.Contains(n))
-                                                .Select(n => (long)n)
-                                                .ToList();
+                var possibleNeighbors = Enumerable
+                    .Range(0, (int)numberOfNodes)
+                    .Where(n => n != i && !builder.Nodes[i].OutgoingEdgeIds.Contains(n))
+                    .Select(n => (long)n)
+                    .ToList();
 
-                    if (possibleNeighbors.Count == 0)
-                        continue;
+                if (possibleNeighbors.Count == 0)
+                    continue;
 
-                    var newNeighbor = possibleNeighbors[rand.Next(possibleNeighbors.Count)];
+                var newNeighbor = possibleNeighbors[rand.Next(possibleNeighbors.Count)];
 
-                    var startNode = builder.Nodes[i];
-                    var endNode = builder.Nodes[oldNeighbor];
-                    startNode.OutgoingEdgeIds = startNode.OutgoingEdgeIds.Where(eid => builder.Edges[eid].EndNodeId != oldNeighbor).ToArray();
-                    endNode.IncomingEdgeIds = endNode.IncomingEdgeIds.Where(eid => builder.Edges[eid].StartNodeId != i).ToArray();
-                    builder.CreateEdge(edgeId, i, newNeighbor);
-                    edgeId++;
-                }
+                var startNode = builder.Nodes[i];
+                var endNode = builder.Nodes[oldNeighbor];
+                startNode.OutgoingEdgeIds = startNode.OutgoingEdgeIds.Where(eid => builder.Edges[eid].EndNodeId != oldNeighbor).ToArray();
+                endNode.IncomingEdgeIds = endNode.IncomingEdgeIds.Where(eid => builder.Edges[eid].StartNodeId != i).ToArray();
+                builder.CreateEdge(edgeId, i, newNeighbor);
+                edgeId++;
             }
         }
 

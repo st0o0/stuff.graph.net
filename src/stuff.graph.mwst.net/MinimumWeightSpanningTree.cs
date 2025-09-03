@@ -1,9 +1,8 @@
-﻿using stuff.graph.algorithms.net;
-using stuff.graph.net;
+﻿using stuff.graph.net;
 
 namespace stuff.graph.mwst.net;
 
-public class MinimumWeightSpanningTree : IAlgorithm<MinimumWeightSpanningTree, MWSTConfig>
+public class MinimumWeightSpanningTree : IMinimumWeightSpanningTree
 {
     private readonly IGraph _graph;
     public static MinimumWeightSpanningTree Create(MWSTConfig config) => new(config.Graph);
@@ -19,13 +18,10 @@ public class MinimumWeightSpanningTree : IAlgorithm<MinimumWeightSpanningTree, M
         var unionFind = new UnionFind(_graph.Nodes.Keys);
         var mstEdges = new List<IEdge>();
 
-        foreach (var edge in edges)
+        foreach (var edge in edges.Where(edge => unionFind.Find(edge.StartNodeId) != unionFind.Find(edge.EndNodeId)))
         {
-            if (unionFind.Find(edge.StartNodeId) != unionFind.Find(edge.EndNodeId))
-            {
-                mstEdges.Add(edge);
-                unionFind.Union(edge.StartNodeId, edge.EndNodeId);
-            }
+            mstEdges.Add(edge);
+            unionFind.Union(edge.StartNodeId, edge.EndNodeId);
         }
 
         return new MWSTResult([.. mstEdges]);

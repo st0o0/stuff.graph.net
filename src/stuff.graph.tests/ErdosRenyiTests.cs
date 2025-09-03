@@ -1,5 +1,4 @@
 using stuff.graph.erdosrenyi.net;
-using stuff.graph.net;
 
 namespace stuff.graph.tests;
 
@@ -11,10 +10,10 @@ public class ErdosRenyiTests
         // Arrange
         var generator = ErdosRenyi.Create();
         var numberOfNodes = 10u;
-        var probability = 0.5;
+        const double probability = 0.5;
 
         // Act
-        IGraph graph = generator.Generate(new ErdosRenyiArgs(numberOfNodes, probability));
+        var graph = generator.Generate(new ErdosRenyiArgs(numberOfNodes, probability));
 
         Assert.Equal((int)numberOfNodes, graph.Nodes.Count);
         Assert.InRange(graph.Edges.Count, 0, (int)numberOfNodes * (numberOfNodes - 1) / 2);
@@ -29,7 +28,7 @@ public class ErdosRenyiTests
         var probability = 0.0;
 
         // Act
-        IGraph graph = generator.Generate(new(numberOfNodes, probability));
+        var graph = generator.Generate(new ErdosRenyiArgs(numberOfNodes, probability));
 
         // Assert
         Assert.Equal((int)numberOfNodes, graph.Nodes.Count);
@@ -45,7 +44,7 @@ public class ErdosRenyiTests
         var probability = 1.0;
 
         // Act
-        IGraph graph = generator.Generate(new(numberOfNodes, probability));
+        var graph = generator.Generate(new ErdosRenyiArgs(numberOfNodes, probability));
 
         // Assert
         Assert.Equal((int)numberOfNodes, graph.Nodes.Count);
@@ -60,7 +59,7 @@ public class ErdosRenyiTests
         var generator = ErdosRenyi.Create();
 
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => generator.Generate(new(10u, -0.5)));
-        Assert.Throws<ArgumentOutOfRangeException>(() => generator.Generate(new(10u, 1.5)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => generator.Generate(new ErdosRenyiArgs(10u, -0.5)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => generator.Generate(new ErdosRenyiArgs(10u, 1.5)));
     }
 }

@@ -1,4 +1,3 @@
 namespace stuff.graph.algorithms.net;
 
-public interface IArgs
-{ }
+public interface IArgs;

@@ -3,12 +3,12 @@ using stuff.graph.net;
 
 namespace stuff.graph.dorogovtsevmendes.net;
 
-public class DorogovtsevMendes : IGenerator<Graph, GeneratorArgs, GeneratorConfig>
+public class DorogovtsevMendes : IDorogovtsevMendes
 {
     private readonly Random _random;
 
-    public static IGenerator<Graph, GeneratorArgs, GeneratorConfig> Create(GeneratorConfig? config = default)
-        => new DorogovtsevMendes(config?.Instance ?? new());
+    public static IGenerator<Graph, GeneratorArgs, GeneratorConfig> Create(GeneratorConfig? config = null)
+        => new DorogovtsevMendes(config?.Instance ?? new Random());
 
     private DorogovtsevMendes(Random random)
     {

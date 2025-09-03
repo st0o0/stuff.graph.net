@@ -66,7 +66,7 @@ public class GraphAlgorithmTests
 
     private static Graph CreateTestGraphForMWST()
     {
-        var builder = GraphBuilder.Create(new GraphSettings(0, 0, 0));
+        var builder = GraphBuilder.Create(new stuff.graph.algorithms.net.GraphSettings(0, 0, 0));
         builder.CreateNode(1, new Vector3(0, 0, 0));
         builder.CreateNode(2, new Vector3(1, 0, 0));
         builder.CreateNode(3, new Vector3(0, 1, 1));
@@ -76,7 +76,7 @@ public class GraphAlgorithmTests
         builder.CreateEdge(3, 3, 4, 1);
         builder.CreateEdge(4, 1, 4, 5);
 
-        return builder.CreateGraph();
+        return (Graph)builder.CreateGraph();
     }
 
     private static Graph CreateTestGraphForWCC()
@@ -89,7 +89,7 @@ public class GraphAlgorithmTests
         builder.CreateEdge(1, 1, 2, 1);
         builder.CreateEdge(2, 3, 4, 1);
 
-        return builder.CreateGraph();
+        return (Graph)builder.CreateGraph();
     }
 
     private static Graph CreateTestGraphForPageRank()
@@ -103,6 +103,6 @@ public class GraphAlgorithmTests
         builder.CreateEdge(2, 2, 3, 1);
         builder.CreateEdge(3, 3, 1, 1);
         builder.CreateEdge(4, 3, 4, 1);
-        return builder.CreateGraph();
+        return (Graph)builder.CreateGraph();
     }
 }

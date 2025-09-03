@@ -1,10 +1,8 @@
 namespace stuff.graph.algorithms.net;
 
-public interface IConfig<TSettings> : IConfig where TSettings : ISettings
+public interface IConfig<out TSettings> : IConfig where TSettings : ISettings
 {
     TSettings Settings { get; }
 }
 
-public interface IConfig
-{
-}
+public interface IConfig;

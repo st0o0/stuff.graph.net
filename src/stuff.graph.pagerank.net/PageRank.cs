@@ -1,9 +1,8 @@
-﻿using stuff.graph.algorithms.net;
-using stuff.graph.net;
+﻿using stuff.graph.net;
 
 namespace stuff.graph.pagerank.net;
 
-public class PageRank : IAlgorithm<PageRank, PageRankConfig>
+public class PageRank : IPageRank
 {
     private readonly IGraph _graph;
     private readonly PageRankSettings _settings;
@@ -23,13 +22,13 @@ public class PageRank : IAlgorithm<PageRank, PageRankConfig>
         var pageRank = _graph.Nodes.Keys.ToDictionary(nodeId => nodeId, nodeId => 1.0 / nodeCount);
         var newPageRank = new Dictionary<long, double>(pageRank);
 
-        for (int iteration = 0; iteration < _settings.MaxIterations; iteration++)
+        for (var iteration = 0; iteration < _settings.MaxIterations; iteration++)
         {
-            bool converged = true;
+            var converged = true;
 
             foreach (var node in _graph.Nodes.Values)
             {
-                double rankSum = 0.0;
+                var rankSum = 0.0;
 
                 foreach (var edgeId in node.IncomingEdgeIds)
                 {

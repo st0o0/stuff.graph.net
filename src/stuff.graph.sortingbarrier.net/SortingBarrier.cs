@@ -1,12 +1,13 @@
 using stuff.graph.algorithms.net;
 using stuff.graph.net;
+using Path = stuff.graph.algorithms.net.Path;
 
 namespace stuff.graph.sortingbarrier.net;
 
-public class SortingBarrier : ISearch<ISearchResult, ISearchArgs, SortingBarrierSettings>
+public class SortingBarrier : ISortingBarrier
 {
-    private IGraph _graph;
-    private SortingBarrierSettings _settings;
+    private readonly IGraph _graph;
+    private readonly SortingBarrierSettings _settings;
     private INodeCostService? _nodeCostService;
     private IEdgeCostService? _edgeCostService;
 
@@ -26,10 +27,10 @@ public class SortingBarrier : ISearch<ISearchResult, ISearchArgs, SortingBarrier
     public void Inject(IEdgeCostService item)
         => _edgeCostService = item;
 
-    public ISearchResult? GetShortestPath(ISearchArgs args)
+    public Path? GetShortestPath(ISearchArgs args)
     {
-        var sourceId = args.SourceNode.Id;
-        var targetId = args.TargetNode.Id;
+        var sourceNodeId = args.SourceNode.Id;
+        var targetNodeId = args.TargetNode.Id;
 
 
         var n = _graph.Nodes.Count;
@@ -38,9 +39,9 @@ public class SortingBarrier : ISearch<ISearchResult, ISearchArgs, SortingBarrier
             .Select((id, idx) => (id, idx))
             .ToDictionary(x => x.id, x => x.idx);
 
-        if (!indexOf.TryGetValue(sourceId, out var sIdx) || !indexOf.TryGetValue(targetId, out _))
+        if (!indexOf.TryGetValue(sourceNodeId, out var sIdx) || !indexOf.TryGetValue(targetNodeId, out _))
         {
-            return new Path(sourceId, targetId, []);
+            return new Path(sourceNodeId, targetNodeId, []);
         }
 
         var dist = Enumerable.Repeat(double.PositiveInfinity, n).ToArray();
@@ -76,14 +77,25 @@ public class SortingBarrier : ISearch<ISearchResult, ISearchArgs, SortingBarrier
                     var u = current.Dequeue();
                     inFrontier[u] = false;
 
-                    var uNode = _graph.Nodes[nodeIds[u]];
+                    var node = _graph.Nodes[nodeIds[u]];
 
-                    foreach (var eid in uNode.OutgoingEdgeIds)
+                    foreach (var edgeId in node.OutgoingEdgeIds)
                     {
-                        var e = _graph.Edges[eid];
-                        var v = indexOf[e.EndNodeId];
+                        var edge = _graph.Edges[edgeId];
+                        if (edge.IsBlocked()) continue;
+                        var vId = edge.GetDirection() switch
+                        {
+                            EdgeDirection.OneWay => edge.EndNodeId,
+                            EdgeDirection.TwoWay when edge.StartNodeId == node.Id => edge.EndNodeId,
+                            EdgeDirection.TwoWay when edge.EndNodeId == node.Id => edge.StartNodeId,
+                            _ => long.MinValue
+                        };
 
-                        var nd = dist[u] + e.RoutingCost;
+                        var v = indexOf[vId];
+                        var nd = dist[u] +
+                                 _nodeCostService.GetValueOrRoutingCost(node) +
+                                 _nodeCostService.GetValueOrRoutingCost(_graph.GetNode(vId)) +
+                                 _edgeCostService.GetValueOrRoutingCost(edge);
                         if (!(nd + 1e-15 < dist[v])) continue;
                         dist[v] = nd;
                         parent[v] = nodeIds[u];
@@ -118,7 +130,7 @@ public class SortingBarrier : ISearch<ISearchResult, ISearchArgs, SortingBarrier
         }
 
         var pathNodes = new List<INode>();
-        for (var v = targetId; v != -1; v = parent[indexOf[v]])
+        for (var v = targetNodeId; v != -1; v = parent[indexOf[v]])
         {
             pathNodes.Add(_graph.Nodes[v]);
             if (!indexOf.ContainsKey(v)) break;
@@ -126,12 +138,12 @@ public class SortingBarrier : ISearch<ISearchResult, ISearchArgs, SortingBarrier
 
         pathNodes.Reverse();
 
-        if (pathNodes.Count == 0 || pathNodes.First().Id != sourceId)
+        if (pathNodes.Count == 0 || pathNodes[0].Id != sourceNodeId)
         {
-            return new Path(sourceId, targetId, []);
+            return new Path(sourceNodeId, targetNodeId, []);
         }
 
-        return new Path(sourceId, targetId, pathNodes.ToArray());
+        return new Path(sourceNodeId, targetNodeId, pathNodes.ToArray());
 
         void AddToBucket(int v)
         {

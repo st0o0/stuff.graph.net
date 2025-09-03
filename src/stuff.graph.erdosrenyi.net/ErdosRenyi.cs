@@ -4,11 +4,11 @@ using stuff.graph.net;
 
 namespace stuff.graph.erdosrenyi.net;
 
-public class ErdosRenyi : IGenerator<Graph, ErdosRenyiArgs, IGeneratorConfig>
+public class ErdosRenyi : IErdosRenyi
 {
     private readonly Random _random;
     public static IGenerator<Graph, ErdosRenyiArgs, IGeneratorConfig> Create(IGeneratorConfig? config = null)
-        => new ErdosRenyi(config?.Instance ?? new());
+        => new ErdosRenyi(config?.Instance ?? new Random());
 
     private ErdosRenyi(Random random)
     {
@@ -17,15 +17,15 @@ public class ErdosRenyi : IGenerator<Graph, ErdosRenyiArgs, IGeneratorConfig>
 
     public Graph Generate(ErdosRenyiArgs args)
     {
-        (uint numberOfNodes, double probability) = (args.NumberOfNodes, args.Prohability);
+        var (numberOfNodes, probability) = (args.NumberOfNodes, args.Prohability);
         if (numberOfNodes <= 0 || probability < 0 || probability > 1)
         {
-            throw new ArgumentOutOfRangeException("Number of nodes must be greater than 0, and probability must be between 0 and 1.");
+            throw new ArgumentOutOfRangeException(nameof(numberOfNodes));
         }
 
         var builder = GraphBuilder.Create();
 
-        for (int i = 0; i < numberOfNodes; i++)
+        for (var i = 0; i < numberOfNodes; i++)
         {
             builder.CreateNode(i, new Vector3(_random.Next(), _random.Next(), _random.Next()));
         }

@@ -30,6 +30,7 @@
     <ProjectReference Include="..\stuff.graph.dijkstra.net\stuff.graph.dijkstra.net.csproj" />
     <ProjectReference Include="..\stuff.graph.mwst.net\stuff.graph.mwst.net.csproj" />
     <ProjectReference Include="..\stuff.graph.pagerank.net\stuff.graph.pagerank.net.csproj" />
+    <ProjectReference Include="..\stuff.graph.sortingbarrier.net\stuff.graph.sortingbarrier.net.csproj" />
     <ProjectReference Include="..\stuff.graph.wcc.net\stuff.graph.wcc.net.csproj" />
     <ProjectReference Include="..\stuff.graph.dorogovtsevmendes.net\stuff.graph.dorogovtsevmendes.net.csproj" />
     <ProjectReference Include="..\stuff.graph.erdosrenyi.net\stuff.graph.erdosrenyi.net.csproj" />

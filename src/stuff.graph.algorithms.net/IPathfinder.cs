@@ -7,13 +7,3 @@ where TSettings : ISettings
 {
     TResult? GetShortestPath(TArguments args);
 }
-
-
-public interface IUpdatableSettings<TSettings> : IUpdatable<TSettings> where TSettings : ISettings
-{
-}
-
-public interface IUpdatable<T>
-{
-    bool Update(T value);
-}

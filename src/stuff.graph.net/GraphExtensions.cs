@@ -2,11 +2,30 @@ namespace stuff.graph.net;
 
 public static class GraphExtensions
 {
-    public static IEdge? GetEdge(this IGraph graph, long id)
-        => graph.Edges.FirstOrDefault(x => x.Key == id).Value;
+    public static (INode? Start, INode? End) GetNodesForEdge(this IGraph graph, long edgeId)
+    {
+        if (!graph.Edges.TryGetValue(edgeId, out var edge))
+        {
+            return (null, null);
+        }
+
+        graph.Nodes.TryGetValue(edge.StartNodeId, out var start);
+        graph.Nodes.TryGetValue(edge.EndNodeId, out var end);
+
+        return (start, end);
+    }
+
+    public static IEdge? GetEdgeBetweenNodes(this IGraph graph, INode sourceNode, INode targetNode)
+    {
+        return graph.Edges.Values
+            .FirstOrDefault(e => e.StartNodeId == sourceNode.Id && e.EndNodeId == targetNode.Id);
+    }
+
+    public static IEdge GetEdge(this IGraph graph, long id)
+        => graph.Edges[id];
 
     public static INode GetNode(this IGraph graph, long id)
-        => graph.Nodes.First(x => x.Key == id).Value;
+        => graph.Nodes[id];
 
     public static void AddNode(this IGraph graph, INode node)
         => graph.Nodes.Add(node.Id, node);

@@ -1,9 +1,10 @@
 using stuff.graph.algorithms.net;
 using stuff.graph.net;
+using Path = stuff.graph.algorithms.net.Path;
 
 namespace stuff.graph.astar.net;
 
-public class AStar : ISearch<Path, SearchPath, AStarSettings>, IUpdatable<AStarSettings>
+public class AStar : IAStar
 {
     private readonly IGraph _graph;
     private AStarSettings _settings;
@@ -11,7 +12,7 @@ public class AStar : ISearch<Path, SearchPath, AStarSettings>, IUpdatable<AStarS
     private INodeCostService? _nodeCostService;
     private IEdgeCostService? _edgeCostService;
 
-    public static ISearch<Path, SearchPath, AStarSettings> Create(ISearchConfig<AStarSettings> config)
+    public static ISearch<Path, ISearchArgs, AStarSettings> Create(ISearchConfig<AStarSettings> config)
         => new AStar(config.Graph, config.Settings);
 
     private AStar(IGraph graph, AStarSettings settings)
@@ -33,15 +34,15 @@ public class AStar : ISearch<Path, SearchPath, AStarSettings>, IUpdatable<AStarS
     public void Inject(IEdgeCostService item)
         => _edgeCostService = item;
 
-    public Path? GetShortestPath(SearchPath args)
+    public Path? GetShortestPath(ISearchArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
-        var start = args.SourceNode;
-        var goal = args.TargetNode;
+        var sourceNode = args.SourceNode;
+        var targetNode = args.TargetNode;
         var openSet = new PriorityQueue<PathNode>();
         var closedSet = new HashSet<long>();
 
-        var startNode = new PathNode(start.Id, 0, Heuristic(start, goal), null, start);
+        var startNode = new PathNode(sourceNode.Id, 0, Heuristic(sourceNode, targetNode), null, sourceNode);
         openSet.Enqueue(startNode);
 
         while (openSet.Count > 0)
@@ -49,35 +50,42 @@ public class AStar : ISearch<Path, SearchPath, AStarSettings>, IUpdatable<AStarS
             var currentNode = openSet.Dequeue();
             var node = currentNode.Node;
 
-            if (currentNode.Node.Id == goal.Id)
+            if (currentNode.Node.Id == targetNode.Id)
             {
                 return ReconstructPath(currentNode);
             }
 
             closedSet.Add(currentNode.Node.Id);
 
-            foreach (var neighbor in GetNeighbors(node))
+            foreach (var neighborNode in GetNeighbors(node))
             {
-                if (closedSet.Contains(neighbor.Id))
+                if (closedSet.Contains(neighborNode.Id))
                 {
                     continue;
                 }
 
-                var tentativeGScore = currentNode.G + Distance(node, neighbor) + node.RoutingCost;
-                var neighborNode = new PathNode(neighbor.Id, tentativeGScore, Heuristic(neighbor, goal), currentNode, neighbor);
+                var tentativeGScore = currentNode.G +
+                                      _nodeCostService.GetValueOrRoutingCost(node) +
+                                      _nodeCostService.GetValueOrRoutingCost(neighborNode) +
+                                      _edgeCostService.GetValueOrRoutingCost(
+                                          _graph.GetEdgeBetweenNodes(node, neighborNode));
+                var neighborPathNode = new PathNode(neighborNode.Id, tentativeGScore,
+                    Heuristic(neighborNode, targetNode),
+                    currentNode,
+                    neighborNode);
 
-                if (!openSet.Contains(neighborNode, (one, two) => one.Id == two.Id))
+                if (!openSet.Contains(neighborPathNode, (one, two) => one.Id == two.Id))
                 {
-                    openSet.Enqueue(neighborNode);
+                    openSet.Enqueue(neighborPathNode);
                 }
-                else if (tentativeGScore < neighborNode.G)
+                else if (tentativeGScore < neighborPathNode.G)
                 {
-                    openSet.UpdatePriority(neighborNode with { G = tentativeGScore });
+                    openSet.UpdatePriority(neighborPathNode with { G = tentativeGScore });
                 }
             }
         }
 
-        return null;
+        return new Path(sourceNode.Id, targetNode.Id, []);
     }
 
     private IEnumerable<INode> GetNeighbors(INode node)
@@ -87,9 +95,14 @@ public class AStar : ISearch<Path, SearchPath, AStarSettings>, IUpdatable<AStarS
 
         foreach (var edgeId in allEdgesIds)
         {
-            var edge = _graph.GetEdge(edgeId);
-            if (edge is null) continue;
-            yield return _graph.GetNode(edge.EndNodeId);
+            var edge = _graph.Edges[edgeId];
+            if (edge.IsBlocked()) continue;
+            yield return edge.GetDirection() switch
+            {
+                EdgeDirection.OneWay => _graph.GetNode(edge.EndNodeId),
+                EdgeDirection.TwoWay when edge.StartNodeId == node.Id => _graph.GetNode(edge.EndNodeId),
+                EdgeDirection.TwoWay when edge.EndNodeId == node.Id => _graph.GetNode(edge.StartNodeId),
+            };
         }
     }
 
@@ -102,14 +115,12 @@ public class AStar : ISearch<Path, SearchPath, AStarSettings>, IUpdatable<AStarS
             path.Add(currentNode.Node);
             currentNode = currentNode.Parent;
         }
+
         path.Reverse();
         var startNodeId = path[0].Id;
         var endNodeId = path[^1].Id;
         return new Path(startNodeId, endNodeId, path.ToArray());
     }
-
-    private static double Distance(INode a, INode b)
-        => Math.Sqrt(Math.Pow(a.Location.X - b.Location.X, 2) + Math.Pow(a.Location.Y - b.Location.Y, 2) + Math.Pow(a.Location.Z - b.Location.Z, 2));
 
     private double Heuristic(INode a, INode b)
         => _settings.Heuristic.Invoke(a, b);

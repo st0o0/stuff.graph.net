@@ -1,0 +1,20 @@
+<Project>
+    <PropertyGroup>
+        <Copyright>Copyright (c) 2024-$([System.DateTime]::Now.Year) st0o0</Copyright>
+        <Authors>st0o0</Authors>
+    </PropertyGroup>
+    <PropertyGroup>
+
+        <PackageProjectUrl>https://github.com/st0o0/stuff.graph.net</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+        <StuffTags>graph;graph theory;edge;node;</StuffTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" Visible="false" PackagePath="\" />
+    </ItemGroup>
+</Project>

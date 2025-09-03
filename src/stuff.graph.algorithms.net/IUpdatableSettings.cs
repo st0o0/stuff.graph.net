@@ -1,4 +1,3 @@
 namespace stuff.graph.algorithms.net;
 
-public interface IUpdatableSettings<TSettings> : IUpdatable<TSettings> where TSettings : ISettings
-{ }
+public interface IUpdatableSettings<in TSettings> : IUpdatable<TSettings> where TSettings : ISettings;

@@ -1,6 +1,5 @@
-using stuff.graph.algorithms.net;
 using stuff.graph.net;
 
-namespace stuff.graph.astar.net;
+namespace stuff.graph.algorithms.net;
 
 public record Path(long SourceNodeId, long TargetNodeId, INode[] Nodes) : ISearchResult;

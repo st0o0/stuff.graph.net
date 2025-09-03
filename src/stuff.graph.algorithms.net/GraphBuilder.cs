@@ -5,14 +5,14 @@ namespace stuff.graph.algorithms.net;
 
 public class GraphBuilder
 {
-    private GraphSettings _settings;
+    private readonly GraphSettings _settings;
     private readonly Graph _graph = new();
 
     public static GraphBuilder Create(GraphSettings settings)
         => new(settings);
 
     public static GraphBuilder Create()
-        => new(new(0, 0, 0));
+        => new(new GraphSettings(0, 0, 0));
 
     private GraphBuilder(GraphSettings settings)
     {
@@ -40,7 +40,15 @@ public class GraphBuilder
 
     public IEdge CreateEdge(long id, long startNodeId, long endNodeId, uint cost = 0)
     {
-        var edge = Edge.Create(id, startNodeId, endNodeId) with { RoutingCost = GetEdgeCost(cost) };
+        var edge = Edge.Create(id, startNodeId, endNodeId, GetEdgeCost(cost));
+        _graph.AddEdge(edge);
+        return edge;
+    }
+
+    public IEdge CreateDirectedEdge(long id, long startNodeId, long endNodeId, uint cost = 0,
+        EdgeDirection direction = EdgeDirection.TwoWay)
+    {
+        var edge = DirectedEdge.Create(id, startNodeId, endNodeId, GetEdgeCost(cost), direction);
         _graph.AddEdge(edge);
         return edge;
     }

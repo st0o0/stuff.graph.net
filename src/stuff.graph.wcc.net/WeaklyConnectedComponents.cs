@@ -1,9 +1,8 @@
-﻿using stuff.graph.algorithms.net;
-using stuff.graph.net;
+﻿using stuff.graph.net;
 
 namespace stuff.graph.wcc.net;
 
-public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, WCCConfig>
+public class WeaklyConnectedComponents : IWeaklyConnectedComponents
 {
     private readonly IGraph _graph;
     public static WeaklyConnectedComponents Create(WCCConfig config) => new(config.Graph);
@@ -18,13 +17,11 @@ public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, W
         var visited = new HashSet<long>();
         var components = new List<IGraph>();
 
-        foreach (var node in _graph.Nodes.Values)
+        foreach (var nodeId in _graph.Nodes.Select(x => x.Key))
         {
-            if (!visited.Contains(node.Id))
-            {
-                var componentGraph = ExploreComponent(node.Id, visited);
-                components.Add(componentGraph);
-            }
+            if (visited.Contains(nodeId)) continue;
+            var componentGraph = ExploreComponent(nodeId, visited);
+            components.Add(componentGraph);
         }
 
         return [.. components];
@@ -44,30 +41,19 @@ public class WeaklyConnectedComponents : IAlgorithm<WeaklyConnectedComponents, W
             var currentNodeId = queue.Dequeue();
             var currentNode = _graph.Nodes[currentNodeId];
 
-            if (!componentNodes.Contains(currentNode))
-            {
-                componentNodes.Add(currentNode);
-            }
+            componentNodes.Add(currentNode);
 
             var allAdjacentEdges = currentNode.OutgoingEdgeIds.Concat(currentNode.IncomingEdgeIds);
 
             foreach (var edgeId in allAdjacentEdges)
             {
-                if (_graph.Edges.TryGetValue(edgeId, out var edge))
-                {
-                    var adjacentNodeId = edge.StartNodeId == currentNodeId ? edge.EndNodeId : edge.StartNodeId;
+                if (!_graph.Edges.TryGetValue(edgeId, out var edge)) continue;
+                var adjacentNodeId = edge.StartNodeId == currentNodeId ? edge.EndNodeId : edge.StartNodeId;
 
-                    if (!componentEdges.Contains(edge))
-                    {
-                        componentEdges.Add(edge);
-                    }
+                componentEdges.Add(edge);
 
-                    if (!visited.Contains(adjacentNodeId))
-                    {
-                        visited.Add(adjacentNodeId);
-                        queue.Enqueue(adjacentNodeId);
-                    }
-                }
+                if (!visited.Add(adjacentNodeId)) continue;
+                queue.Enqueue(adjacentNodeId);
             }
         }
 

@@ -36,12 +36,12 @@ public class GraphAlgorithmTests
         // Assert
         Assert.Equal(2, result.Length);
 
-        var component1 = result.First();
+        var component1 = result[0];
         Assert.Equal(2, component1.Nodes.Count);
         Assert.Contains(1, component1.Nodes.Keys);
         Assert.Contains(2, component1.Nodes.Keys);
 
-        var component2 = result.Last();
+        var component2 = result[^1];
         Assert.Equal(2, component2.Nodes.Count);
         Assert.Contains(3, component2.Nodes.Keys);
         Assert.Contains(4, component2.Nodes.Keys);
@@ -76,7 +76,7 @@ public class GraphAlgorithmTests
         builder.CreateEdge(3, 3, 4, 1);
         builder.CreateEdge(4, 1, 4, 5);
 
-        return (Graph)builder.CreateGraph();
+        return builder.CreateGraph();
     }
 
     private static Graph CreateTestGraphForWCC()
@@ -89,7 +89,7 @@ public class GraphAlgorithmTests
         builder.CreateEdge(1, 1, 2, 1);
         builder.CreateEdge(2, 3, 4, 1);
 
-        return (Graph)builder.CreateGraph();
+        return builder.CreateGraph();
     }
 
     private static Graph CreateTestGraphForPageRank()
@@ -103,6 +103,6 @@ public class GraphAlgorithmTests
         builder.CreateEdge(2, 2, 3, 1);
         builder.CreateEdge(3, 3, 1, 1);
         builder.CreateEdge(4, 3, 4, 1);
-        return (Graph)builder.CreateGraph();
+        return builder.CreateGraph();
     }
 }

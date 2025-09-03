@@ -1,15 +1,16 @@
 using stuff.graph.algorithms.net;
 using stuff.graph.net;
+using Path = stuff.graph.algorithms.net.Path;
 
 namespace stuff.graph.dijkstra.net;
 
-public class Dijkstra : ISearch<ISearchResult, ISearchArgs, ISettings>
+public class Dijkstra : IDijkstra
 {
     private readonly IGraph _graph;
     private INodeCostService? _nodeCostService;
     private IEdgeCostService? _edgeCostService;
 
-    public static ISearch<ISearchResult, ISearchArgs, ISettings> Create(ISearchConfig config)
+    public static ISearch<Path, ISearchArgs, ISettings> Create(ISearchConfig config)
         => new Dijkstra(config.Graph);
 
     private Dijkstra(IGraph graph)
@@ -23,47 +24,64 @@ public class Dijkstra : ISearch<ISearchResult, ISearchArgs, ISettings>
     public void Inject(IEdgeCostService item)
         => _edgeCostService = item;
 
-    public ISearchResult? GetShortestPath(ISearchArgs args)
+    public Path? GetShortestPath(ISearchArgs args)
     {
-        var source = args.SourceNode;
-        var target = args.TargetNode;
+        var sourceNode = args.SourceNode;
+        var targetNode = args.TargetNode;
         var distances = new Dictionary<long, uint>();
         var priorityQueue = new PriorityQueue<PathNode>();
 
-        foreach (var node in _graph.Nodes.Values)
+        try
         {
-            distances[node.Id] = uint.MaxValue;
-        }
-
-        var pathNode = new PathNode(source.Id, 0, null, source);
-        priorityQueue.Enqueue(pathNode);
-
-        while (priorityQueue.Count > 0)
-        {
-            var currentNode = priorityQueue.Dequeue();
-            var node = currentNode.Node;
-
-            if (currentNode.Id == target.Id)
+            foreach (var node in _graph.Nodes.Values)
             {
-                return ReconstructPath(currentNode);
+                distances[node.Id] = uint.MaxValue;
             }
 
-            foreach (var edgeId in node.OutgoingEdgeIds)
-            {
-                var edge = _graph.GetEdge(edgeId);
-                if (edge is null) continue;
-                var neighborNodeId = edge.EndNodeId;
+            var pathNode = new PathNode(sourceNode.Id, 0, null, sourceNode);
+            priorityQueue.Enqueue(pathNode);
 
-                var newDistance = currentNode.CurrentDistance + edge.RoutingCost + node.RoutingCost;
-                if (newDistance < distances[neighborNodeId])
+            while (priorityQueue.Count > 0)
+            {
+                var currentNode = priorityQueue.Dequeue();
+                var node = currentNode.Node;
+
+                if (currentNode.Id == targetNode.Id)
                 {
+                    return ReconstructPath(currentNode);
+                }
+
+                foreach (var edgeId in node.OutgoingEdgeIds)
+                {
+                    var edge = _graph.Edges[edgeId];
+                    if (edge.IsBlocked()) continue;
+                    var neighborNodeId = edge.GetDirection() switch
+                    {
+                        EdgeDirection.OneWay => edge.EndNodeId,
+                        EdgeDirection.TwoWay when edge.StartNodeId == node.Id => edge.EndNodeId,
+                        EdgeDirection.TwoWay when edge.EndNodeId == node.Id => edge.StartNodeId,
+                        _ => long.MinValue
+                    };
+
+                    var neighborNode = _graph.GetNode(neighborNodeId);
+                    var newDistance = currentNode.CurrentDistance +
+                                      _nodeCostService.GetValueOrRoutingCost(node) +
+                                      _nodeCostService.GetValueOrRoutingCost(neighborNode) +
+                                      _edgeCostService.GetValueOrRoutingCost(
+                                          _graph.GetEdgeBetweenNodes(node, neighborNode));
+                    if (newDistance >= distances[neighborNodeId]) continue;
                     distances[neighborNodeId] = newDistance;
-                    priorityQueue.Enqueue(new PathNode(neighborNodeId, newDistance, currentNode, _graph.GetNode(neighborNodeId)));
+                    priorityQueue.Enqueue(new PathNode(neighborNodeId, newDistance, currentNode,
+                        _graph.GetNode(neighborNodeId)));
                 }
             }
         }
+        catch (Exception)
+        {
+            return new Path(sourceNode.Id, targetNode.Id, []);
+        }
 
-        return null;
+        return new Path(sourceNode.Id, targetNode.Id, []);
     }
 
     private static Path ReconstructPath(PathNode? currentNode)

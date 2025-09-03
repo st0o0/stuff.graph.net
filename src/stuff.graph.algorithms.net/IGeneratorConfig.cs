@@ -1,8 +1,6 @@
 namespace stuff.graph.algorithms.net;
 
-public interface IGeneratorConfig<TSettings> : IGeneratorConfig, IConfig<TSettings> where TSettings : ISettings
-{
-}
+public interface IGeneratorConfig<out TSettings> : IGeneratorConfig, IConfig<TSettings> where TSettings : ISettings;
 
 public interface IGeneratorConfig : IConfig
 {

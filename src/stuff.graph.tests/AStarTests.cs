@@ -3,7 +3,6 @@ using stuff.graph.astar.net;
 using stuff.graph.algorithms.net;
 using stuff.graph.serializable.net;
 using stuff.graph.wcc.net;
-using stuff.graph.net;
 using stuff.graph.erdosrenyi.net;
 using Xunit.Abstractions;
 
@@ -35,7 +34,7 @@ public partial class AstarTests
         var astar = AStar.Create(new AStarConfig(graph, settings));
 
         // Act
-        var path = astar.GetShortestPath(new SearchPath(startNode, endNode));
+        var path = astar.GetShortestPath(new SearchArgs(startNode, endNode));
 
         // Assert
         Assert.NotNull(path);
@@ -55,10 +54,11 @@ public partial class AstarTests
         var astar = AStar.Create(new AStarConfig(graph, settings));
 
         // Act
-        var path = astar.GetShortestPath(new SearchPath(startNode, isolatedNode));
+        var path = astar.GetShortestPath(new SearchArgs(startNode, isolatedNode));
 
         // Assert
-        Assert.Null(path);
+        Assert.NotNull(path);
+        Assert.Empty(path.Nodes);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public partial class AstarTests
         var astar = AStar.Create(new AStarConfig(graph, settings));
 
         // Act
-        var path = astar.GetShortestPath(new SearchPath(startNode, endNode));
+        var path = astar.GetShortestPath(new SearchArgs(startNode, endNode));
 
         // Assert
         Assert.NotNull(path);
@@ -100,7 +100,7 @@ public partial class AstarTests
         var target = biggestGraph.Nodes.Values.ToArray()[^1];
         var a = AStar.Create(new AStarConfig(biggestGraph, new AStarSettings(Heuristic.Manhatten)));
         watch.Restart();
-        var path = a.GetShortestPath(new SearchPath(source, target));
+        var path = a.GetShortestPath(new SearchArgs(source, target));
         watch.Stop();
         _output.WriteLine($"a*: {watch.ElapsedMilliseconds}ms");
         Assert.NotNull(path);
@@ -111,11 +111,11 @@ public partial class AstarTests
     [Fact]
     public void Test()
     {
-        var graph = ErdosRenyi.Create().Generate(new(1000));
+        var graph = ErdosRenyi.Create().Generate(new ErdosRenyiArgs(1000));
         var source = graph.Nodes.Values.ToArray()[0];
         var target = graph.Nodes.Values.ToArray()[^1];
         var algo = AStar.Create(new AStarConfig(graph, new AStarSettings(Heuristic.Manhatten)));
-        var result = algo.GetShortestPath(new SearchPath(source, target));
+        var result = algo.GetShortestPath(new SearchArgs(source, target));
         Assert.NotNull(result);
         Assert.NotEmpty(result.Nodes);
     }
